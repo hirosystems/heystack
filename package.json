@@ -53,7 +53,8 @@
       "@stacks/eslint-config"
     ],
     "rules": {
-      "@typescript-eslint/no-unsafe-assignment": 0
+      "@typescript-eslint/no-unsafe-assignment": 0,
+      "@typescript-eslint/explicit-module-boundary-types": 0
     },
     "parserOptions": {
       "project": [
