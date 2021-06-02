@@ -17,6 +17,8 @@
     "web-vitals": "2.0.0"
   },
   "devDependencies": {
+    "@stacks/eslint-config": "1.0.9",
+    "@stacks/prettier-config": "0.0.8",
     "@testing-library/jest-dom": "5.11.4",
     "@testing-library/react": "11.1.0",
     "@testing-library/user-event": "13.1.9",
@@ -25,6 +27,8 @@
     "@types/react": "17.0.9",
     "@types/react-dom": "17.0.6",
     "craco-alias": "3.0.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "2.3.0",
     "react-scripts": "4.0.3"
   },
   "scripts": {
@@ -32,14 +36,26 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "yarn lint:eslint && yarn lint:prettier",
+    "lint:eslint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint:prettier": "prettier --check \"src/**/*.{ts,tsx}\" *.js",
+    "lint:prettier:fix": "prettier --write \"src/**/*.{ts,tsx}\" *.js"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "react-app/jest",
+      "@stacks/eslint-config"
+    ],
+    "parserOptions": {
+      "project": [
+        "./tsconfig.json"
+      ]
+    }
   },
+  "prettier": "@stacks/prettier-config",
   "browserslist": {
     "production": [
       ">0.2%",

@@ -6,10 +6,7 @@ export interface User {
 }
 
 export const defaultUser = (): User => {
-  const appConfig = new AppConfig(
-    ['store_write', 'publish_data'],
-    document.location.href
-  );
+  const appConfig = new AppConfig(['store_write', 'publish_data'], document.location.href);
   const userSession = new UserSession({ appConfig });
 
   if (userSession.isUserSignedIn()) {
