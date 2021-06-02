@@ -3,6 +3,7 @@ import { Box, color, ColorModeProvider, Flex, ThemeProvider } from '@stacks/ui';
 import { Header } from '@components/header';
 import { WelcomePanel } from '@components/welcome-panel';
 import 'modern-normalize/modern-normalize.css';
+import { Feed } from '@components/feed';
 
 export const App: React.FC = memo(() => {
   return (
@@ -13,6 +14,7 @@ export const App: React.FC = memo(() => {
             <Header />
             <Flex p="base" flexGrow={1}>
               <WelcomePanel />
+              <Feed />
             </Flex>
           </Flex>
         </Flex>
