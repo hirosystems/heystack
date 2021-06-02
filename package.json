@@ -2,6 +2,7 @@
   "name": "heystack",
   "version": "0.1.0",
   "private": true,
+  "prettier": "@stacks/prettier-config",
   "dependencies": {
     "@craco/craco": "6.1.2",
     "@emotion/react": "11.4.0",
@@ -28,6 +29,8 @@
   },
   "devDependencies": {
     "@blockstack/stacks-blockchain-api-types": "^0.55.3",
+    "@blockstack/clarity": "^0.3.14",
+    "@blockstack/clarity-native-bin": "^0.3.14",
     "@stacks/eslint-config": "1.0.9",
     "@stacks/prettier-config": "0.0.8",
     "@testing-library/jest-dom": "5.11.4",
@@ -42,8 +45,10 @@
     "csstype": "3.0.8",
     "esbuild": "^0.12.5",
     "eslint-plugin-prettier": "3.4.0",
+    "jest": "^27.0.3",
     "prettier": "2.3.0",
-    "react-scripts": "4.0.3"
+    "react-scripts": "4.0.3",
+    "ts-jest": "^27.0.2"
   },
   "scripts": {
     "dev": "yarn start",
@@ -74,7 +79,6 @@
       ]
     }
   },
-  "prettier": "@stacks/prettier-config",
   "browserslist": {
     "production": [
       ">0.2%",
