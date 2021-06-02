@@ -61,6 +61,11 @@ const c2 = capsize({
   fontSize: 12,
   leading: 16,
 });
+const body = capsize({
+  fontMetrics: interMetrics,
+  fontSize: 17,
+  leading: 28,
+});
 
 const captionStyles = (variant?: 'c1' | 'c2') => {
   switch (variant) {
@@ -112,6 +117,7 @@ export const Text = forwardRefWithAs<BoxProps, 'span'>((props, ref) => (
     color={color('text-body')}
     display="block"
     ref={ref}
+    css={body}
     {...props}
   />
 ));
