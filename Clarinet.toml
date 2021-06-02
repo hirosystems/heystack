@@ -1,0 +1,10 @@
+[project]
+name = "."
+
+[contracts.sip-010-trait]
+path = "contracts/clarinet/sip-10-ft-standard.clar"
+depends_on = []
+
+[contracts.hey]
+path = "contracts/hey.clar"
+depends_on = ["sip-010-trait"]
