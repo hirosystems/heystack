@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'jotai';
 import './index.css';
-import App from './app';
+import App from './components/app';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider>
     <App />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('app')
 );
