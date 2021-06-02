@@ -1,19 +1,18 @@
-import React from 'react';
-import { useAtom } from 'jotai';
-import './app.css';
-import { appPrivateKeyAtom, authResponseAtom, userAtom } from '../store/auth';
-import {useUser} from "@hooks/use-user";
+import React, { memo } from 'react';
+import { Box, ColorModeProvider, Flex, ThemeProvider } from '@stacks/ui';
+import { Header } from '@components/header';
 
-export const App: React.FC = () => {
-  const [authResponse, setAuthResponse] = useAtom(authResponseAtom);
-  const [appPrivateKey, setAppPrivateKey] = useAtom(appPrivateKeyAtom);
-  const [user, setUser] = useUser();
-
+export const App: React.FC = memo(() => {
   return (
-    <div className="app">
-      <h1>Heystack</h1>
-    </div>
+    <ThemeProvider>
+      <ColorModeProvider defaultMode="light">
+        <Flex flexDirection="column" minHeight="100vh" minWidth="100%">
+          <Header />
+          <Flex flexGrow={1}>app</Flex>
+        </Flex>
+      </ColorModeProvider>
+    </ThemeProvider>
   );
-};
+});
 
 export default App;
