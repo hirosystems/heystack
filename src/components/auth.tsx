@@ -16,6 +16,8 @@ import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
 import { useHeyBalance } from '@hooks/use-hey-balance';
+import { useCurrentAddress } from '@hooks/use-current-address';
+import { UserAvatar } from '@components/user-avatar';
 
 const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> = memo(
   ({ onSignOut, show }) => {
@@ -60,7 +62,8 @@ const BalanceComponent = memo(() => {
 });
 
 const Menu: React.FC = memo(() => {
-  const { user, addresses, setUser } = useUser();
+  const { user, setUser } = useUser();
+  const address = useCurrentAddress();
   const userSession = useUserSession();
   const [isHovered, setIsHovered] = useState(false);
   const bind = useHover(setIsHovered);
@@ -82,9 +85,9 @@ const Menu: React.FC = memo(() => {
       {...bind}
     >
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
-        <Box as={Avatar} name={addresses?.testnet} variant="beam" size="40px" />
+        <UserAvatar />
         <Stack spacing="base-tight">
-          <Text>{user?.username || truncateMiddle(addresses?.testnet)}</Text>
+          <Text>{user?.username || truncateMiddle(address)}</Text>
 
           <React.Suspense fallback={<></>}>
             <BalanceComponent />
