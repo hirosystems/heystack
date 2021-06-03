@@ -1,18 +1,24 @@
-import { useUser } from '@hooks/use-user';
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
 import { useConnect } from '@stacks/connect-react';
 import { useNetwork } from '@hooks/use-network';
 import { useCallback } from 'react';
+import { useHeyContract } from '@hooks/use-hey-contract';
+import { REQUEST_FUNCTION } from '@common/constants';
+import { principalCV } from '@stacks/transactions/dist/clarity/types/principalCV';
+import { useCurrentAddress } from '@hooks/use-current-address';
 
 export function useHandleClaimHey() {
-  const { addresses } = useUser(); // something like this
+  const address = useCurrentAddress();
   const { setIsLoading } = useLoading(LOADING_KEYS.CLAIM_HEY);
   const { doContractCall } = useConnect();
+  const [contractAddress, contractName] = useHeyContract();
   const network = useNetwork();
+
   const onFinish = useCallback(() => {
     void setIsLoading(false);
   }, [setIsLoading]);
+
   const onCancel = useCallback(() => {
     void setIsLoading(false);
   }, [setIsLoading]);
@@ -20,14 +26,14 @@ export function useHandleClaimHey() {
   return useCallback(() => {
     void setIsLoading(true);
     void doContractCall({
-      contractAddress: 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N',
-      contractName: 'heystack-token',
-      functionName: 'faucet',
-      functionArgs: [],
+      contractAddress,
+      contractName,
+      functionName: REQUEST_FUNCTION,
+      functionArgs: [principalCV(address)],
       onFinish,
       onCancel,
       network,
-      stxAddress: addresses?.testnet,
+      stxAddress: address,
     });
-  }, [setIsLoading, onFinish, network, onCancel, addresses, doContractCall]);
+  }, [setIsLoading, onFinish, network, onCancel, address, doContractCall]);
 }

@@ -7,16 +7,15 @@ import {
   createAssetInfo,
   createFungiblePostCondition,
   FungibleConditionCode,
-  stringUtf8CV,
+  uintCV,
 } from '@stacks/transactions';
-import { useApiRevalidation } from '@hooks/use-api-revalidation';
 import { useUpdateAtom } from 'jotai/utils';
 import { useCurrentAddress } from '@hooks/use-current-address';
 import { useHeyContract } from '@hooks/use-hey-contract';
-import { MESSAGE_FUNCTION } from '@common/constants';
+import { LIKE_FUNCTION } from '@common/constants';
 import BN from 'bn.js';
 
-export function useHandlePublishContent() {
+export function useHandleLikeHey() {
   const setShowPendingOverlay = useUpdateAtom(showPendingOverlayAtom);
   const address = useCurrentAddress();
   const [contractAddress, contractName] = useHeyContract();
@@ -33,19 +32,15 @@ export function useHandlePublishContent() {
   }, [setIsLoading, setShowPendingOverlay]);
 
   return useCallback(
-    (content: string, _onFinish: () => void) => {
+    (id: number) => {
       void setShowPendingOverlay(true);
       void setIsLoading(true);
 
       void doContractCall({
         contractAddress,
         contractName,
-        functionName: MESSAGE_FUNCTION,
-        functionArgs: [stringUtf8CV(content)],
-        onFinish: () => {
-          _onFinish();
-          onFinish();
-        },
+        functionName: LIKE_FUNCTION,
+        functionArgs: [uintCV(id)],
         postConditions: [
           createFungiblePostCondition(
             address,
@@ -54,6 +49,9 @@ export function useHandlePublishContent() {
             createAssetInfo(contractAddress, 'hey-token-2', 'hey-token')
           ),
         ],
+        onFinish: () => {
+          onFinish();
+        },
         onCancel,
         network,
         stxAddress: address,
