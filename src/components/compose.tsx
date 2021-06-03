@@ -6,6 +6,7 @@ import { Button } from '@components/button';
 import { useHandlePublishContent } from '@hooks/use-publish-hey';
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
+import Textarea from 'react-textarea-autosize';
 
 export const Compose = () => {
   const { value, handleUpdate, handleReset } = useCompose();
@@ -39,11 +40,12 @@ export const Compose = () => {
       <Box
         onChange={handleUpdate}
         value={value}
-        as="input"
+        as={Textarea}
         border={0}
         outline={0}
         placeholder="Say hey to other Stackers"
         width="100%"
+        pr="70px"
       />
       <Fade in={value !== ''}>
         {styles => (
