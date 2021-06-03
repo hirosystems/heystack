@@ -14,3 +14,4 @@ export const networkAtom = atom(() => {
   _network.coreApiUrl = 'https://stacks-node-api.regtest.stacks.co';
   return _network;
 });
+export const showPendingOverlayAtom = atom(false);
