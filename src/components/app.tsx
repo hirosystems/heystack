@@ -55,7 +55,21 @@ export const App: React.FC = memo(() => {
               <Header />
               <Flex p="base" flexGrow={1}>
                 <WelcomePanel />
-                <Feed />
+                <React.Suspense
+                  fallback={
+                    <Flex
+                      transform="translateX(-150px)"
+                      alignItems="center"
+                      justifyContent="center"
+                      width="600px"
+                      flexGrow={1}
+                    >
+                      <Spinner size="96px" borderStyle="solid" />
+                    </Flex>
+                  }
+                >
+                  <Feed />
+                </React.Suspense>
               </Flex>
             </Flex>
           </Flex>

@@ -4,6 +4,7 @@ export interface FeedItem {
     name?: string;
   };
   heystack: {
+    id: number;
     content: string;
     upvotes: number;
     uri?: string;
@@ -18,6 +19,7 @@ export const feed: FeedItem[] = [
       name: 'j.btc',
     },
     heystack: {
+      id: 0,
       content: 'upvote this and give me HEY',
       upvotes: 500,
     },
@@ -28,6 +30,7 @@ export const feed: FeedItem[] = [
       name: 'andy.btc',
     },
     heystack: {
+      id: 1,
       content: 'wen stx moon ser pls',
       upvotes: 20,
     },
@@ -38,6 +41,7 @@ export const feed: FeedItem[] = [
       name: 'thomas.btc',
     },
     heystack: {
+      id: 2,
       content: 'We discussed generally the trade-offs to showing raw parameter details by default.',
       upvotes: 999,
     },
@@ -48,6 +52,7 @@ export const feed: FeedItem[] = [
       name: 'mark.btc',
     },
     heystack: {
+      id: 3,
       content: 'We discussed generally the trade-offs to showing raw parameter details by default.',
       upvotes: 2,
     },
@@ -58,6 +63,7 @@ export const feed: FeedItem[] = [
       name: 'j.btc',
     },
     heystack: {
+      id: 4,
       content: 'Hey helllooo',
       upvotes: 0,
     },
