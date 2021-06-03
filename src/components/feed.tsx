@@ -105,7 +105,7 @@ export const Feed = (props: StackProps) => {
     >
       <Box width="100%">
         <AnimatePresence initial={false}>
-          <Stack flexDirection="column-reverse" spacing="loose">
+          <Stack spacing="loose">
             {feed.map((item, key) => {
               const isUser = item.sender === addresses?.testnet;
               return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
