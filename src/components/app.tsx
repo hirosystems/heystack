@@ -6,6 +6,7 @@ import { WelcomePanel } from '@components/welcome-panel';
 import { Feed } from '@components/feed';
 import { useAuthOptions } from '@hooks/use-auth-options';
 import 'modern-normalize/modern-normalize.css';
+import { PendingOverlay } from '@components/pending-overlay';
 
 const AppWrapper: React.FC = memo(({ children }) => {
   const authOptions = useAuthOptions();
@@ -21,6 +22,7 @@ const AppWrapper: React.FC = memo(({ children }) => {
 export const App: React.FC = memo(() => {
   return (
     <AppWrapper>
+      <PendingOverlay />
       <Flex bg={color('bg-4')} flexDirection="column" minHeight="100vh" minWidth="100%" p="base">
         <Flex bg={color('bg')} flexDirection="column" flexGrow={1} borderRadius="24px">
           <Header />
