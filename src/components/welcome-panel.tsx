@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import Avatar from 'boring-avatars';
 import { Box, IconButton, Stack, StackProps } from '@stacks/ui';
 import { Button } from '@components/button';
@@ -8,6 +8,9 @@ import { ConnectGraphic } from '@components/connect-graphic';
 import { FiX } from 'react-icons/fi';
 import { useUser } from '@hooks/use-user';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
+import { useLoading } from '@hooks/use-loading';
+import { LOADING_KEYS } from '@store/ui';
+import { useHandleClaimHey } from '@hooks/use-claim-hey';
 
 const AboutSection = memo((props: StackProps) => {
   return (
@@ -45,8 +48,10 @@ const SignedOutView: React.FC<StackProps> = ({ ...props }) => {
     </Stack>
   );
 };
-const SignedInView: React.FC<StackProps> = ({ onClick, ...props }) => {
+const SignedInView: React.FC<StackProps> = ({ ...props }) => {
   const { addresses } = useUser(); // something like this
+  const { isLoading } = useLoading(LOADING_KEYS.CLAIM_HEY);
+  const handleFaucetCall = useHandleClaimHey();
 
   return (
     <Stack
@@ -58,11 +63,12 @@ const SignedInView: React.FC<StackProps> = ({ onClick, ...props }) => {
       {...props}
     >
       <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="64px" />
-
       <Text maxWidth="24ch" fontWeight={500}>
         Welcome to Heystack! Claim your 100 HEY to start chatting{' '}
       </Text>
-      <Button onClick={onClick}>Claim HEY</Button>
+      <Button isLoading={isLoading} onClick={handleFaucetCall}>
+        Claim HEY
+      </Button>
     </Stack>
   );
 };

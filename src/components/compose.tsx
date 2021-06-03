@@ -3,11 +3,14 @@ import { Fade, Box, Stack } from '@stacks/ui';
 import { border } from '@common/utils';
 import { useCompose } from '@hooks/use-compose';
 import { Button } from '@components/button';
-import { useFeed } from '@hooks/use-feed';
+import { useHandlePublishContent } from '@hooks/use-publish-hey';
+import { useLoading } from '@hooks/use-loading';
+import { LOADING_KEYS } from '@store/ui';
 
 export const Compose = () => {
   const { value, handleUpdate, handleReset } = useCompose();
-  const { handleAddItemToFeed } = useFeed();
+  const handlePublishContent = useHandlePublishContent();
+  const { isLoading } = useLoading(LOADING_KEYS.SEND_HEY);
   return (
     <Stack
       isInline
@@ -32,10 +35,12 @@ export const Compose = () => {
           <Button
             position="absolute"
             right="loose"
+            isLoading={isLoading}
             style={styles}
             onClick={() => {
-              void handleAddItemToFeed(value);
-              void handleReset();
+              handlePublishContent(value, () => {
+                void handleReset();
+              });
             }}
           >
             Send

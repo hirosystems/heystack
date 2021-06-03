@@ -6,10 +6,17 @@ import { Caption, Text } from '@components/typography';
 import { FiArrowUpCircle } from 'react-icons/all';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Compose } from '@components/compose';
-import { FeedItem } from '@common/feed';
 import { useFeed } from '@hooks/use-feed';
+import { useUser } from '@hooks/use-user';
+import { truncateMiddle } from '@stacks/ui-utils';
 
-const Message = ({ isUser, item }: { isUser: boolean; item: FeedItem }) => {
+const Message = ({
+  isUser,
+  item,
+}: {
+  isUser: boolean;
+  item: { content?: string; sender: string };
+}) => {
   return (
     <Stack
       border={border(isUser ? 'bg-4' : undefined)}
@@ -19,19 +26,25 @@ const Message = ({ isUser, item }: { isUser: boolean; item: FeedItem }) => {
       isInline
     >
       <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
-        {!isUser && <Caption>{item.user.name || item.user.address}</Caption>}
-        <Text>{item.heystack.content}</Text>
+        {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
+        <Text>{item.content}</Text>
       </Stack>
     </Stack>
   );
 };
 
-const ItemDetailsRow = ({ isUser, item }: { isUser: boolean; item: FeedItem }) => {
+const ItemDetailsRow = ({
+  isUser,
+  item,
+}: {
+  isUser: boolean;
+  item: { content?: string; sender: string };
+}) => {
   return (
     <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
       <Stack alignItems="center" isInline pl={isUser ? 0 : 'loose'} pr={isUser ? 'loose' : 0}>
         <Box as={FiArrowUpCircle} size="14px" color={color('text-caption')} />
-        <Caption>{item.heystack.upvotes}</Caption>
+        <Caption>0</Caption>
       </Stack>
     </Stack>
   );
@@ -45,7 +58,7 @@ const FeedItemComponent = ({
 }: {
   index: number;
   isUser: boolean;
-  item: FeedItem;
+  item: { content?: string; sender: string };
 }) => {
   return (
     <Stack
@@ -63,7 +76,7 @@ const FeedItemComponent = ({
           flexShrink={0}
           order={isUser ? 2 : 0}
           as={Avatar}
-          name={`${item.user.name || ''}__${item.user.address}`}
+          name={item.sender}
           variant="beam"
           size="36px"
           mr={!isUser ? 'base' : 'unset'}
@@ -76,8 +89,8 @@ const FeedItemComponent = ({
   );
 };
 export const Feed = (props: StackProps) => {
-  const { feed } = useFeed();
-  const user = 'j.btc';
+  const feed = useFeed();
+  const { addresses } = useUser();
   return (
     <Stack
       px="base"
@@ -90,11 +103,11 @@ export const Feed = (props: StackProps) => {
       flexGrow={1}
       spacing="extra-loose"
     >
-      <Box>
+      <Box width="100%">
         <AnimatePresence initial={false}>
-          <Stack spacing="loose">
+          <Stack flexDirection="column-reverse" spacing="loose">
             {feed.map((item, key) => {
-              const isUser = item.user.name === user;
+              const isUser = item.sender === addresses?.testnet;
               return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
             })}
           </Stack>
