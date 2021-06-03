@@ -1,11 +1,13 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
+import Avatar from 'boring-avatars';
 import { Box, IconButton, Stack, StackProps } from '@stacks/ui';
 import { Button } from '@components/button';
 import { border } from '@common/utils';
 import { Caption, Text, Title } from '@components/typography';
 import { ConnectGraphic } from '@components/connect-graphic';
 import { FiX } from 'react-icons/fi';
-import Avatar from 'boring-avatars';
+import { useUser } from '@hooks/use-user';
+import { ConnectWalletButton } from '@components/connect-wallet-button';
 
 const AboutSection = memo((props: StackProps) => {
   return (
@@ -22,7 +24,7 @@ const AboutSection = memo((props: StackProps) => {
   );
 });
 
-const SignedOutView: React.FC<StackProps> = ({ onClick, ...props }) => {
+const SignedOutView: React.FC<StackProps> = ({ ...props }) => {
   return (
     <Stack
       alignItems="center"
@@ -39,13 +41,13 @@ const SignedOutView: React.FC<StackProps> = ({ onClick, ...props }) => {
       <Text maxWidth="24ch" fontWeight={500}>
         Connect your wallet to get 100 HEY and start chatting
       </Text>
-      <Button onClick={onClick}>Connect wallet</Button>
+      <ConnectWalletButton />
     </Stack>
   );
 };
 const SignedInView: React.FC<StackProps> = ({ onClick, ...props }) => {
-  // const { user } = useUser();
-  const name = 'asdadsd random'; // TODO: user.addresses.mainnet
+  const { addresses } = useUser(); // something like this
+
   return (
     <Stack
       alignItems="center"
@@ -55,7 +57,7 @@ const SignedInView: React.FC<StackProps> = ({ onClick, ...props }) => {
       textAlign="center"
       {...props}
     >
-      <Box as={Avatar} name={name} variant="beam" size="64px" />
+      <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="64px" />
 
       <Text maxWidth="24ch" fontWeight={500}>
         Welcome to Heystack! Claim your 100 HEY to start chatting{' '}
@@ -66,9 +68,7 @@ const SignedInView: React.FC<StackProps> = ({ onClick, ...props }) => {
 };
 
 const UserSection = memo((props: StackProps) => {
-  // TODO: auth
-  // const {isLoading, isSignedIn, user} = useAuth(); // something like this
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { user } = useUser(); // something like this
 
   return (
     <Stack
@@ -79,14 +79,11 @@ const UserSection = memo((props: StackProps) => {
       textAlign="center"
       {...props}
     >
-      {!isSignedIn ? (
-        <SignedOutView onClick={() => setIsSignedIn(true)} />
-      ) : (
-        <SignedInView onClick={() => console.log('click')} />
-      )}
+      {!user ? <SignedOutView /> : <SignedInView onClick={() => console.log('click')} />}
     </Stack>
   );
 });
+
 const LearnMoreSection = memo((props: StackProps) => {
   return (
     <Stack justifyContent="flex-start" alignItems="flex-start" spacing="loose" {...props}>
