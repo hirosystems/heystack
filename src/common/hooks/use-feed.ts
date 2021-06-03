@@ -12,7 +12,7 @@ export function useFeed() {
           name: 'j.btc',
         },
         heystack: {
-          id: s[s.length - 1].heystack.id + 1,
+          id: s[s.length - 1].heystack.id++,
           content,
           upvotes: 0,
         },

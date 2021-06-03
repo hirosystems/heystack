@@ -1,13 +1,20 @@
 import React, { memo, useCallback, useState } from 'react';
 import { useAtom } from 'jotai';
 import Avatar from 'boring-avatars';
-import { Button, Box, BoxProps, ButtonGroup, color, Fade, Flex, Stack } from '@stacks/ui';
+import { Box, BoxProps, color, Fade, Flex, Stack } from '@stacks/ui';
+import { Button } from '@components/button';
 import { useConnect } from '@stacks/connect-react';
 import { userAtom } from '@store/auth';
 import { Link } from '@components/link';
 import { useHover } from '@common/hooks/use-hover';
 import { Caption, Text } from '@components/typography';
 import { border } from '@common/utils';
+import { useUser } from '@hooks/use-user';
+import { truncateMiddle } from '@stacks/ui-utils';
+import { useUserSession } from '@hooks/use-usersession';
+import { useLoading } from '@hooks/use-loading';
+import { LOADING_KEYS } from '@store/ui';
+import { ConnectWalletButton } from '@components/connect-wallet-button';
 
 const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> = memo(
   ({ onSignOut, show }) => {
@@ -47,53 +54,48 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
   }
 );
 
-const Menu: React.FC = () => {
-  const [user, setUser] = useAtom(userAtom);
+const Menu: React.FC = memo(() => {
+  const { user, addresses, setUser } = useUser();
+  const userSession = useUserSession();
   const [isHovered, setIsHovered] = useState(false);
   const bind = useHover(setIsHovered);
-
   const handleRemoveHover = useCallback(() => setIsHovered(false), [setIsHovered]);
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(() => {
     handleRemoveHover();
-    void setUser(null);
-  };
-  // TODO: username is "" and HEY is hardcoded
+    userSession.signUserOut();
+    void setUser(undefined);
+  }, [userSession, setUser, handleRemoveHover]);
+
   // TODO: Add icons
   return (
     <Stack
       minWidth="212px"
-      pt="tight"
       _hover={{
         cursor: 'pointer',
       }}
       {...bind}
     >
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
-        <Box as={Avatar} name={user?.username} variant="beam" size="40px" />
-        <Stack>
-          <Text>{user?.username}</Text>
+        <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="40px" />
+        <Stack spacing="base-tight">
+          <Text>{user?.username || truncateMiddle(addresses?.mainnet)}</Text>
           <Caption>100 HEY</Caption>
         </Stack>
       </Stack>
       <Dropdown onSignOut={handleSignOut} show={isHovered} />
     </Stack>
   );
-};
+});
 
-export const Auth: React.FC = () => {
-  const { doOpenAuth } = useConnect();
+export const Auth: React.FC = memo(() => {
   const [user] = useAtom(userAtom);
 
   return user ? (
     <Menu />
   ) : (
-    <Box>
-      <ButtonGroup spacing={'base'} mt={'base-loose'}>
-        <Button size="md" mode="primary" onClick={() => doOpenAuth()} data-test="connect-wallet">
-          Connect wallet
-        </Button>
-      </ButtonGroup>
+    <Box p="loose">
+      <ConnectWalletButton />
     </Box>
   );
-};
+});
