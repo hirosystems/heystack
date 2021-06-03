@@ -29,18 +29,20 @@ export const Compose = () => {
     <Stack
       isInline
       border={border()}
-      width="100%"
       p="loose"
       alignItems="center"
       borderRadius="24px"
-      position="relative"
       as="form"
       onSubmit={onSubmit}
+      mx="auto"
+      position="relative"
+      width="600px"
     >
       <Box
         onChange={handleUpdate}
         value={value}
         as={Textarea}
+        resize="none"
         border={0}
         outline={0}
         placeholder="Say hey to other Stackers"

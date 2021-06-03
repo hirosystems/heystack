@@ -101,7 +101,14 @@ const LearnMoreSection = memo((props: StackProps) => {
 });
 export const WelcomePanel = memo(props => {
   return (
-    <Stack p="loose" maxWidth="336px" border={border()} borderRadius="12px" spacing="extra-loose">
+    <Stack
+      position="absolute"
+      p="loose"
+      maxWidth="336px"
+      border={border()}
+      borderRadius="12px"
+      spacing="extra-loose"
+    >
       <AboutSection />
       <UserSection />
       <LearnMoreSection />

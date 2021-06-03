@@ -21,7 +21,7 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
     return (
       <Fade in={show}>
         {styles => (
-          <Flex top="100%" right={0} position="absolute" style={styles}>
+          <Flex top="100%" right={0} position="absolute" zIndex={99999} style={styles}>
             <Stack
               isInline
               _hover={{ bg: color('bg-alt') }}
@@ -34,6 +34,8 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
               bg={color('bg')}
               borderRadius="12px"
               p="base"
+              position="relative"
+              zIndex={9999999999}
             >
               <FiLogOut color="#D4001A" />
               <Link
@@ -72,7 +74,6 @@ const BalanceComponent = memo(() => {
 
 const Menu: React.FC = memo(() => {
   const { setUser } = useUser();
-  const address = useCurrentAddress();
   const userSession = useUserSession();
   const [isHovered, setIsHovered] = useState(false);
   const bind = useHover(setIsHovered);
@@ -90,6 +91,10 @@ const Menu: React.FC = memo(() => {
       _hover={{
         cursor: 'pointer',
       }}
+      position="fixed"
+      top="extra-loose"
+      right="extra-loose"
+      zIndex={9999}
       {...bind}
     >
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>

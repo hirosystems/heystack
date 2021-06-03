@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { Box, color, Flex, Stack, StackProps } from '@stacks/ui';
 import { Avatar } from '@components/avatar';
 import { border } from '@common/utils';
@@ -10,51 +10,61 @@ import { useFeed } from '@hooks/use-feed';
 import { useUser } from '@hooks/use-user';
 import { truncateMiddle } from '@stacks/ui-utils';
 import { Heystack } from '@store/hey';
+import { useGetItemLikes } from '@hooks/use-get-item-likes';
+import { useHandleLikeHey } from '@hooks/use-like-hey';
 
-const Message = ({
-  isUser,
-  item,
-}: {
-  isUser: boolean;
-  item: { content?: string; sender: string };
-}) => {
-  return (
-    <Stack
-      border={border(isUser ? 'bg-4' : undefined)}
-      bg={isUser ? color('bg-4') : color('bg')}
-      borderRadius="24px"
-      p="loose"
-      isInline
-    >
-      <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
-        {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
-        <Text>{item.content}</Text>
+const Message = memo(
+  ({ isUser, item }: { isUser: boolean; item: { content?: string; sender: string } }) => {
+    return (
+      <Stack
+        border={border(isUser ? 'bg-4' : undefined)}
+        bg={isUser ? color('bg-4') : color('bg')}
+        borderRadius="24px"
+        p="loose"
+        isInline
+      >
+        <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
+          {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
+          <Text>{item.content}</Text>
+        </Stack>
       </Stack>
-    </Stack>
-  );
+    );
+  }
+);
+
+const ItemLikes = ({ index }: { index: number }) => {
+  const likes = useGetItemLikes(index);
+  return <Caption color="currentColor">{likes}</Caption>;
 };
 
-const ItemDetailsRow = ({ isUser, item }: { isUser: boolean; item: Heystack }) => {
+const ItemDetailsRow = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => {
+  const handleLikeHey = useHandleLikeHey();
+
   return (
     <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
-      <Stack alignItems="center" isInline pl={isUser ? 0 : 'loose'} pr={isUser ? 'loose' : 0}>
-        <Box as={FiArrowUpCircle} size="14px" color={color('text-caption')} />
-        <Caption>0</Caption>
-      </Stack>
+      {item.index ? (
+        <Stack
+          onClick={isUser ? undefined : () => handleLikeHey(item.index as number)}
+          alignItems="center"
+          _hover={isUser ? undefined : { cursor: 'pointer', color: color('brand') }}
+          isInline
+          pl={isUser ? 0 : 'loose'}
+          pr={isUser ? 'loose' : 0}
+          color={color('text-caption')}
+        >
+          <Box as={FiArrowUpCircle} size="14px" color="currentColor" />
+          {!item.isPending && item.index && (
+            <React.Suspense fallback={<Caption color="currentColor">...</Caption>}>
+              <ItemLikes index={item.index} />
+            </React.Suspense>
+          )}
+        </Stack>
+      ) : null}
     </Stack>
   );
-};
+});
 
-const FeedItemComponent = ({
-  isUser,
-  item,
-  index,
-  ...rest
-}: {
-  index: number;
-  isUser: boolean;
-  item: Heystack;
-}) => {
+const FeedItemComponent = memo(({ isUser, item, ...rest }: { isUser: boolean; item: Heystack }) => {
   return (
     <Stack
       as={motion.div}
@@ -66,6 +76,7 @@ const FeedItemComponent = ({
       exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
       wordBreak="break-word"
       key={item.id}
+      mb="loose"
       {...rest}
     >
       <Flex alignItems="flex-end">
@@ -82,41 +93,40 @@ const FeedItemComponent = ({
       <ItemDetailsRow isUser={isUser} item={item} />
     </Stack>
   );
-};
+});
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef<HTMLDivElement | null>();
   useEffect(() => elementRef?.current?.scrollIntoView());
   return <div ref={elementRef as any} />;
 };
-export const Feed = (props: StackProps) => {
+export const Feed = memo((props: StackProps) => {
   const feed = useFeed();
   const { addresses } = useUser();
   return (
-    <Stack
-      px="base"
-      transform="translateX(-150px)"
-      mx="auto"
-      maxWidth="664px"
-      alignSelf="flex-end"
-      alignItems="flex-start"
-      justifyContent="flex-end"
-      flexGrow={1}
-      spacing="extra-loose"
-    >
-      <Flex flexDirection="column" justifyContent="flex-end" flexGrow={1} width="100%">
+    <Box width="100%" mx="auto" mt="auto">
+      <Flex
+        flexDirection="column"
+        flexGrow={1}
+        spacing="extra-loose"
+        position="relative"
+        maxHeight="calc(100vh - 250px)"
+        minHeight={0}
+        overflowY="auto"
+        overflowX="hidden"
+        px="extra-loose"
+        width="100%"
+        mx="auto"
+        maxWidth="600px"
+      >
         <AnimatePresence initial={false}>
-          <Stack maxHeight="calc(100vh - 250px)" px="extra-loose" overflow="auto">
-            <Stack spacing="loose">
-              {feed.map((item, key) => {
-                const isUser = item.sender === addresses?.testnet;
-                return <FeedItemComponent index={key} key={item.id} item={item} isUser={isUser} />;
-              })}
-            </Stack>
-            <AlwaysScrollToBottom />
-          </Stack>
+          {feed.map((item, key) => {
+            const isUser = item.sender === addresses?.testnet;
+            return <FeedItemComponent key={item.id} item={item} isUser={isUser} />;
+          })}
         </AnimatePresence>
+        <AlwaysScrollToBottom />
       </Flex>
       <Compose />
-    </Stack>
+    </Box>
   );
-};
+});
