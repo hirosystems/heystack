@@ -1,4 +1,5 @@
 const CracoAlias = require('craco-alias');
+const CracoEsbuildPlugin = require('craco-esbuild');
 
 module.exports = {
   plugins: [
@@ -10,5 +11,6 @@ module.exports = {
         tsConfigPath: './tsconfig.paths.json',
       },
     },
+    { plugin: CracoEsbuildPlugin },
   ],
 };
