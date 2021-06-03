@@ -74,9 +74,7 @@ export const pendingTxsAtom = atomWithQuery<Heystack[], string>(get => ({
           tx.contract_call.contract_id === 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack'
       )
       .map(tx => tx.tx_id);
-    const final = await Promise.all(
-      heyTxs.map(async txid => client.getTransactionById({ txId: txid }))
-    );
+    const final = await Promise.all(heyTxs.map(txid => client.getTransactionById({ txId: txid })));
 
     return (
       (final as ContractCallTransaction[]).map(tx => ({

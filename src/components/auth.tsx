@@ -1,9 +1,7 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useAtom } from 'jotai';
-import Avatar from 'boring-avatars';
+import { FiChevronDown, FiLogOut } from 'react-icons/fi';
 import { Box, BoxProps, color, Fade, Flex, Stack } from '@stacks/ui';
-import { Button } from '@components/button';
-import { useConnect } from '@stacks/connect-react';
 import { userAtom } from '@store/auth';
 import { Link } from '@components/link';
 import { useHover } from '@common/hooks/use-hover';
@@ -12,12 +10,11 @@ import { border } from '@common/utils';
 import { useUser } from '@hooks/use-user';
 import { truncateMiddle } from '@stacks/ui-utils';
 import { useUserSession } from '@hooks/use-usersession';
-import { useLoading } from '@hooks/use-loading';
-import { LOADING_KEYS } from '@store/ui';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
 import { useHeyBalance } from '@hooks/use-hey-balance';
 import { useCurrentAddress } from '@hooks/use-current-address';
 import { UserAvatar } from '@components/user-avatar';
+import { useAccountNames } from '@common/hooks/use-account-names';
 
 const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> = memo(
   ({ onSignOut, show }) => {
@@ -26,8 +23,9 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
         {styles => (
           <Flex top="100%" right={0} position="absolute" style={styles}>
             <Stack
+              isInline
               _hover={{ bg: color('bg-alt') }}
-              justifyContent="center"
+              alignItems="center"
               border={border()}
               overflow="hidden"
               boxShadow="mid"
@@ -37,9 +35,11 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
               borderRadius="12px"
               p="base"
             >
+              <FiLogOut color="#D4001A" />
               <Link
                 _hover={{ textDecoration: 'none !important' }}
                 display="inline-block"
+                mb={1}
                 ml={2}
                 textStyle="caption.medium"
                 color="red"
@@ -56,13 +56,22 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
     );
   }
 );
+
+const AccountNameComponent = memo(() => {
+  const { user } = useUser();
+  const address = useCurrentAddress();
+  const names = useAccountNames(address);
+  const name = names?.[0];
+  return <Text mb="tight">{name || user?.username || truncateMiddle(address)}</Text>;
+});
+
 const BalanceComponent = memo(() => {
   const balance = useHeyBalance();
-  return <Caption>{balance || 0} HEY</Caption>;
+  return <Caption pr="tight">{balance || 0} HEY</Caption>;
 });
 
 const Menu: React.FC = memo(() => {
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const address = useCurrentAddress();
   const userSession = useUserSession();
   const [isHovered, setIsHovered] = useState(false);
@@ -75,7 +84,6 @@ const Menu: React.FC = memo(() => {
     void setUser(undefined);
   }, [userSession, setUser, handleRemoveHover]);
 
-  // TODO: Add icons
   return (
     <Stack
       minWidth="212px"
@@ -87,10 +95,12 @@ const Menu: React.FC = memo(() => {
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
         <UserAvatar />
         <Stack spacing="base-tight">
-          <Text>{user?.username || truncateMiddle(address)}</Text>
-
           <React.Suspense fallback={<></>}>
-            <BalanceComponent />
+            <AccountNameComponent />
+            <Stack isInline alignItems="center">
+              <BalanceComponent />
+              <FiChevronDown />
+            </Stack>
           </React.Suspense>
         </Stack>
       </Stack>
