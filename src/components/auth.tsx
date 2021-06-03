@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useAtom } from 'jotai';
 import Avatar from 'boring-avatars';
 import { Box, BoxProps, color, Fade, Flex, Stack } from '@stacks/ui';
@@ -15,6 +15,7 @@ import { useUserSession } from '@hooks/use-usersession';
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
+import { useHeyBalance } from '@hooks/use-hey-balance';
 
 const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> = memo(
   ({ onSignOut, show }) => {
@@ -53,6 +54,10 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
     );
   }
 );
+const BalanceComponent = memo(() => {
+  const balance = useHeyBalance();
+  return <Caption>{balance || 0} HEY</Caption>;
+});
 
 const Menu: React.FC = memo(() => {
   const { user, addresses, setUser } = useUser();
@@ -80,7 +85,10 @@ const Menu: React.FC = memo(() => {
         <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="40px" />
         <Stack spacing="base-tight">
           <Text>{user?.username || truncateMiddle(addresses?.mainnet)}</Text>
-          <Caption>100 HEY</Caption>
+
+          <React.Suspense fallback={<></>}>
+            <BalanceComponent />
+          </React.Suspense>
         </Stack>
       </Stack>
       <Dropdown onSignOut={handleSignOut} show={isHovered} />

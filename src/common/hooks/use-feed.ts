@@ -1,26 +1,8 @@
-import { useAtom } from 'jotai';
-import { feedAtom } from '@store/feed';
+import { contentTransactionsAtom } from '@store/hey';
+import { useAtomValue } from 'jotai/utils';
 
 export function useFeed() {
-  const [feed, setFeed] = useAtom(feedAtom);
-  const handleAddItemToFeed = (content: string) =>
-    setFeed(s => [
-      ...s,
-      {
-        user: {
-          address: 'SP3TMFBG2FSSEHA5Q81ZMVMRB9GK0METVDV7RENRC',
-          name: 'j.btc',
-        },
-        heystack: {
-          id: s[s.length - 1].heystack.id++,
-          content,
-          upvotes: 0,
-        },
-      },
-    ]);
+  const feed = useAtomValue(contentTransactionsAtom);
 
-  return {
-    feed,
-    handleAddItemToFeed,
-  };
+  return feed;
 }
