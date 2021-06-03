@@ -11,6 +11,7 @@ import { ConnectWalletButton } from '@components/connect-wallet-button';
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
 import { useHandleClaimHey } from '@hooks/use-claim-hey';
+import { UserAvatar } from '@components/user-avatar';
 
 const AboutSection = memo((props: StackProps) => {
   return (
@@ -49,7 +50,6 @@ const SignedOutView: React.FC<StackProps> = ({ ...props }) => {
   );
 };
 const SignedInView: React.FC<StackProps> = ({ ...props }) => {
-  const { addresses } = useUser(); // something like this
   const { isLoading } = useLoading(LOADING_KEYS.CLAIM_HEY);
   const handleFaucetCall = useHandleClaimHey();
 
@@ -62,7 +62,7 @@ const SignedInView: React.FC<StackProps> = ({ ...props }) => {
       textAlign="center"
       {...props}
     >
-      <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="64px" />
+      <UserAvatar size="64px" />
       <Text maxWidth="24ch" fontWeight={500}>
         Welcome to Heystack! Claim your 100 HEY to start chatting{' '}
       </Text>
