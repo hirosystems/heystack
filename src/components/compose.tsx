@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Fade, Box, Stack } from '@stacks/ui';
 import { border } from '@common/utils';
 import { useCompose } from '@hooks/use-compose';
@@ -11,6 +11,19 @@ export const Compose = () => {
   const { value, handleUpdate, handleReset } = useCompose();
   const handlePublishContent = useHandlePublishContent();
   const { isLoading } = useLoading(LOADING_KEYS.SEND_HEY);
+  const handleSubmit = useCallback(() => {
+    handlePublishContent(value, () => {
+      void handleReset();
+    });
+  }, [handlePublishContent, value, handleReset]);
+
+  const onSubmit = useCallback(
+    e => {
+      e.preventDefault();
+      handleSubmit();
+    },
+    [handleSubmit]
+  );
   return (
     <Stack
       isInline
@@ -20,6 +33,8 @@ export const Compose = () => {
       alignItems="center"
       borderRadius="24px"
       position="relative"
+      as="form"
+      onSubmit={onSubmit}
     >
       <Box
         onChange={handleUpdate}
@@ -32,17 +47,7 @@ export const Compose = () => {
       />
       <Fade in={value !== ''}>
         {styles => (
-          <Button
-            position="absolute"
-            right="loose"
-            isLoading={isLoading}
-            style={styles}
-            onClick={() => {
-              handlePublishContent(value, () => {
-                void handleReset();
-              });
-            }}
-          >
+          <Button position="absolute" right="loose" isLoading={isLoading} style={styles}>
             Send
           </Button>
         )}
