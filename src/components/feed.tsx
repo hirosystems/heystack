@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, color, Flex, Stack, StackProps } from '@stacks/ui';
 import Avatar from 'boring-avatars';
 import { border } from '@common/utils';
@@ -88,6 +88,11 @@ const FeedItemComponent = ({
     </Stack>
   );
 };
+const AlwaysScrollToBottom = () => {
+  const elementRef = useRef<HTMLDivElement | null>();
+  useEffect(() => elementRef?.current?.scrollIntoView());
+  return <div ref={elementRef as any} />;
+};
 export const Feed = (props: StackProps) => {
   const feed = useFeed();
   const { addresses } = useUser();
@@ -105,11 +110,14 @@ export const Feed = (props: StackProps) => {
     >
       <Flex flexDirection="column" justifyContent="flex-end" flexGrow={1} width="100%">
         <AnimatePresence initial={false}>
-          <Stack maxHeight="calc(100vh - 250px)" px="extra-loose" overflow="auto" spacing="loose">
-            {feed.map((item, key) => {
-              const isUser = item.sender === addresses?.testnet;
-              return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
-            })}
+          <Stack maxHeight="calc(100vh - 250px)" px="extra-loose" overflow="auto">
+            <Stack spacing="loose">
+              {feed.map((item, key) => {
+                const isUser = item.sender === addresses?.testnet;
+                return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
+              })}
+            </Stack>
+            <AlwaysScrollToBottom />
           </Stack>
         </AnimatePresence>
       </Flex>
