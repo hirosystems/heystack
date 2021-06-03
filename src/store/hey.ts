@@ -16,6 +16,7 @@ export const incrementAtom = atom(0);
 export const userHeyBalanceAtom = atom(async get => {
   get(incrementAtom);
   const user = get(userAtom);
+  if (!user?.profile?.stxAddress?.testnet) return;
   const client = get(smartContractsClientAtom);
   const [contractAddress, contractName] = HEY_TOKEN_ADDRESS.split('.');
   const data = await client.callReadOnlyFunction({
