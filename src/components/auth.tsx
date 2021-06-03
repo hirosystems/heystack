@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import Avatar from 'boring-avatars';
 import { Button, Box, BoxProps, ButtonGroup, color, Fade, Flex, Stack } from '@stacks/ui';
 import { useConnect } from '@stacks/connect-react';
-import { userAtom } from '@store/auth';
+import { userAtom, userSessionAtom } from '@store/auth';
 import { Link } from '@components/link';
 import { useHover } from '@common/hooks/use-hover';
 import { Caption, Text } from '@components/typography';
@@ -51,10 +51,12 @@ const Menu: React.FC = () => {
   const [user, setUser] = useAtom(userAtom);
   const [isHovered, setIsHovered] = useState(false);
   const bind = useHover(setIsHovered);
+  const [userSession] = useAtom(userSessionAtom);
 
   const handleRemoveHover = useCallback(() => setIsHovered(false), [setIsHovered]);
 
   const handleSignOut = () => {
+    userSession.signUserOut();
     handleRemoveHover();
     void setUser(null);
   };

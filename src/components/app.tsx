@@ -1,9 +1,9 @@
 import React, { memo, useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { color, ColorModeProvider, Flex, ThemeProvider } from '@stacks/ui';
+import { color, ColorModeProvider, Flex, Spinner, ThemeProvider } from '@stacks/ui';
 import { Connect } from '@stacks/connect-react';
 import { AuthOptions } from '@stacks/connect';
-import { appPrivateKeyAtom, authResponseAtom, userAtom, userSession } from '@store/auth';
+import { appPrivateKeyAtom, authResponseAtom, userAtom, userSessionAtom } from '@store/auth';
 import { Header } from '@components/header';
 import { WelcomePanel } from '@components/welcome-panel';
 import 'modern-normalize/modern-normalize.css';
@@ -13,13 +13,8 @@ import { useUpdateAtom } from 'jotai/utils';
 export const App: React.FC = memo(() => {
   const setAppPrivateKey = useUpdateAtom(appPrivateKeyAtom);
   const setAuthResponse = useUpdateAtom(authResponseAtom);
-  const [user, setUser] = useAtom(userAtom);
-
-  useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      void setUser(user);
-    }
-  }, []);
+  const setUser = useUpdateAtom(userAtom);
+  const [userSession] = useAtom(userSessionAtom);
 
   const authOptions: AuthOptions = {
     manifestPath: '/static/manifest.json',
