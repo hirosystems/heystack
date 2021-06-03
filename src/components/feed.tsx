@@ -96,23 +96,23 @@ export const Feed = (props: StackProps) => {
       px="base"
       transform="translateX(-150px)"
       mx="auto"
-      maxWidth="600px"
+      maxWidth="664px"
       alignSelf="flex-end"
       alignItems="flex-start"
       justifyContent="flex-end"
       flexGrow={1}
       spacing="extra-loose"
     >
-      <Box width="100%">
+      <Flex flexDirection="column" justifyContent="flex-end" flexGrow={1} width="100%">
         <AnimatePresence initial={false}>
-          <Stack spacing="loose">
+          <Stack maxHeight="calc(100vh - 250px)" px="extra-loose" overflow="auto" spacing="loose">
             {feed.map((item, key) => {
               const isUser = item.sender === addresses?.testnet;
               return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
             })}
           </Stack>
         </AnimatePresence>
-      </Box>
+      </Flex>
       <Compose />
     </Stack>
   );
