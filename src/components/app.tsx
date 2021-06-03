@@ -19,7 +19,7 @@ const AppWrapper: React.FC = memo(({ children }) => {
   );
 });
 
-export const App: React.FC = memo(() => {
+const App: React.FC = memo(() => {
   return (
     <AppWrapper>
       <PendingOverlay />
