@@ -82,9 +82,9 @@ const Menu: React.FC = memo(() => {
       {...bind}
     >
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
-        <Box as={Avatar} name={addresses?.mainnet} variant="beam" size="40px" />
+        <Box as={Avatar} name={addresses?.testnet} variant="beam" size="40px" />
         <Stack spacing="base-tight">
-          <Text>{user?.username || truncateMiddle(addresses?.mainnet)}</Text>
+          <Text>{user?.username || truncateMiddle(addresses?.testnet)}</Text>
 
           <React.Suspense fallback={<></>}>
             <BalanceComponent />

@@ -9,6 +9,7 @@ import {
   MempoolTransactionListResponse,
   TransactionResults,
 } from '@blockstack/stacks-blockchain-api-types';
+import { atomWithQuery } from 'jotai/query';
 
 export const incrementAtom = atom(0);
 
@@ -31,50 +32,65 @@ export const userHeyBalanceAtom = atom(async get => {
   }
 });
 
-export const heyTransactionsAtom = atom(async get => {
-  get(incrementAtom);
-  const client = get(accountsClientAtom);
-  const txs = await client.getAccountTransactions({
-    principal: 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack',
-  });
-  return (txs as TransactionResults).results.filter(
-    tx => tx.tx_type === 'contract_call'
-  ) as ContractCallTransaction[];
-});
+const defaultOptions = {
+  refetchInterval: 1000,
+  refetchOnReconnect: true,
+  refetchOnWindowFocus: true,
+  refetchOnMount: true,
+  keepPreviousData: true,
+};
+export const heyTransactionsAtom = atomWithQuery<ContractCallTransaction[], string>(get => ({
+  queryKey: ['hey-txs'],
+  ...(defaultOptions as any),
+  queryFn: async (): Promise<ContractCallTransaction[]> => {
+    const client = get(accountsClientAtom);
+    const txs = await client.getAccountTransactions({
+      principal: 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack',
+    });
+    return (txs as TransactionResults).results.filter(
+      tx => tx.tx_type === 'contract_call'
+    ) as ContractCallTransaction[];
+  },
+}));
 
-const pendingTxsAtom = atom(async get => {
-  get(incrementAtom);
-  const client = get(transactionsClientAtom);
+export const pendingTxsAtom = atomWithQuery<{ sender: string; content?: string }[], string>(
+  get => ({
+    queryKey: ['hey-pending-txs'],
+    ...(defaultOptions as any),
+    queryFn: async (): Promise<{ sender: string; content?: string }[]> => {
+      const client = get(transactionsClientAtom);
 
-  const txs = await client.getMempoolTransactionList({});
-  const heyTxs = (txs as MempoolTransactionListResponse).results
-    .filter(
-      tx =>
-        tx.tx_type === 'contract_call' &&
-        tx.contract_call.contract_id === 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack'
-    )
-    .map(tx => tx.tx_id);
-  const final = await Promise.all(
-    heyTxs.map(async txid => client.getTransactionById({ txId: txid }))
-  );
+      const txs = await client.getMempoolTransactionList({});
+      const heyTxs = (txs as MempoolTransactionListResponse).results
+        .filter(
+          tx =>
+            tx.tx_type === 'contract_call' &&
+            tx.contract_call.contract_id === 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack'
+        )
+        .map(tx => tx.tx_id);
+      const final = await Promise.all(
+        heyTxs.map(async txid => client.getTransactionById({ txId: txid }))
+      );
 
-  return (
-    (final as ContractCallTransaction[]).map(tx => ({
-      sender: tx.sender_address,
-      content: tx.contract_call.function_args?.[0].repr,
-    })) || []
-  );
-});
+      return (
+        (final as ContractCallTransaction[]).map(tx => ({
+          sender: tx.sender_address,
+          content: tx.contract_call.function_args?.[0].repr.replace(`u"`, '').slice(0, -1),
+        })) || []
+      );
+    },
+  })
+);
+
 export const contentTransactionsAtom = atom(get => {
-  get(incrementAtom);
   const txs = get(heyTransactionsAtom);
   const pending = get(pendingTxsAtom);
   const feed = txs.map(tx => {
-    const content = tx.contract_call.function_args?.[0].repr;
+    const content = tx.contract_call.function_args?.[0].repr.replace(`u"`, '').slice(0, -1);
     return {
       content,
       sender: tx.sender_address,
     };
   });
-  return [...pending, ...feed];
+  return [...pending, ...feed].reverse();
 });
