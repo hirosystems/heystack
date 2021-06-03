@@ -27,7 +27,7 @@ describe('Hey token', () => {
   describe('Using the contracts', () => {
     // We don't set any initial balances
     test('Balances after minting are correct', async () => {
-      expect(await heyClient.balanceOf(alice)).toEqual(0);
+      expect(await heyClient.balanceOf(alice)).toEqual(10000);
       expect(await heyClient.balanceOf(bob)).toEqual(0);
       expect(await heyClient.balanceOf(charlie)).toEqual(0);
     });
@@ -47,7 +47,7 @@ describe('Hey token', () => {
 
     test('total supply', async () => {
       const totalSupply = await heyClient.totalSupply();
-      expect(totalSupply).toEqual(0);
+      expect(totalSupply).toEqual(10000);
 
       const balances = await Promise.all([
         heyClient.balanceOf(alice),
@@ -61,7 +61,7 @@ describe('Hey token', () => {
 
     test('name', async () => {
       const name = await heyClient.getName();
-      expect(name).toEqual('HeyStack Token');
+      expect(name).toEqual('Heystack Token');
     });
 
     test('decimals', async () => {

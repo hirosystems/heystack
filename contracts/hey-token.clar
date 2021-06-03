@@ -41,3 +41,14 @@
 
 (define-public (get-token-uri)
   (ok (some u"https://heystack.xyz/token-metadata.json")))
+
+(define-public (gift-tokens (recipient principal))
+  (begin
+  ;; (if 
+    ;; (is-eq tx-sender contract-creator) 
+      (print tx-sender)
+      (ok (ft-mint? hey-token u1 recipient))
+      ;; (ok (as-contract tx-sender))
+    ;; (err ERR-UNAUTHORIZED))
+  )
+)

@@ -1,10 +1,10 @@
-import { Client, Provider, Result, Receipt } from "@blockstack/clarity";
+import { Client, Provider, Result, Receipt } from '@blockstack/clarity';
 
 const unwrapError = (receipt: Receipt) => {
-  if (!receipt.error) throw new Error("No error found");
+  if (!receipt.error) throw new Error('No error found');
   const error = receipt.error as unknown as Error;
-  const message = error.message.split("\n")[0];
-  return parseInt(message.split("Aborted: u")[1], 10);
+  const message = error.message.split('\n')[0];
+  return parseInt(message.split('Aborted: u')[1], 10);
 };
 
 export class TransferError extends Error {
@@ -18,7 +18,7 @@ export class TransferError extends Error {
 
 export class ExampleTokenClient extends Client {
   constructor(principal: string, provider: Provider) {
-    super(`${principal}.example-token`, "clarinet/example-token", provider);
+    super(`${principal}.example-token`, 'clarinet/example-token', provider);
   }
 
   async transfer(
@@ -29,22 +29,15 @@ export class ExampleTokenClient extends Client {
     const { sender, senderArg } = params;
     const tx = this.createTransaction({
       method: {
-        name: "transfer",
-        args: [
-          `u${amount}`,
-          `'${senderArg || sender}`,
-          `'${recipient}`,
-          "none",
-        ],
+        name: 'transfer',
+        args: [`u${amount}`, `'${senderArg || sender}`, `'${recipient}`, 'none'],
       },
     });
     await tx.sign(sender);
     const receipt = await this.submitTransaction(tx);
     if (receipt.success) {
       const result = Result.unwrap(receipt);
-      return result.startsWith(
-        "Transaction executed and committed. Returned: true"
-      );
+      return result.startsWith('Transaction executed and committed. Returned: true');
     }
     const error = unwrapError(receipt);
     throw new TransferError(error);
@@ -53,7 +46,7 @@ export class ExampleTokenClient extends Client {
   async balanceOf(owner: string): Promise<number> {
     const query = this.createQuery({
       method: {
-        name: "get-balance",
+        name: 'get-balance',
         args: [`'${owner}`],
       },
     });
@@ -64,7 +57,7 @@ export class ExampleTokenClient extends Client {
   async totalSupply(): Promise<number> {
     const query = this.createQuery({
       method: {
-        name: "get-total-supply",
+        name: 'get-total-supply',
         args: [],
       },
     });
@@ -75,7 +68,7 @@ export class ExampleTokenClient extends Client {
   async decimals(): Promise<number> {
     const query = this.createQuery({
       method: {
-        name: "get-decimals",
+        name: 'get-decimals',
         args: [],
       },
     });
@@ -86,7 +79,7 @@ export class ExampleTokenClient extends Client {
   async symbol(): Promise<string> {
     const query = this.createQuery({
       method: {
-        name: "get-symbol",
+        name: 'get-symbol',
         args: [],
       },
     });
@@ -97,7 +90,7 @@ export class ExampleTokenClient extends Client {
   async getName() {
     const query = this.createQuery({
       method: {
-        name: "get-name",
+        name: 'get-name',
         args: [],
       },
     });
