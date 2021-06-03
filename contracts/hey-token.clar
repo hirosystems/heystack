@@ -44,8 +44,8 @@
 
 (define-public (gift-tokens (recipient principal))
   (begin
-  ;; (if 
-    ;; (is-eq tx-sender contract-creator) 
+  ;; (if
+    ;; (is-eq tx-sender contract-creator)
       (print tx-sender)
       (ok (ft-mint? hey-token u1 recipient))
       ;; (ok (as-contract tx-sender))

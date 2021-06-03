@@ -60,12 +60,12 @@
 (define-public (send-message (content (string-utf8 140)))
   (let ((id (unwrap! (increment-content-index) (err u0))))
     (print { content: content, publisher: tx-sender, index: id })
-    (map-set like-state 
-      { content-index: id } 
+    (map-set like-state
+      { content-index: id }
       { likes: u0 }
     )
-    (map-set publisher-state 
-      { content-index: id } 
+    (map-set publisher-state
+      { content-index: id }
       { publisher: tx-sender }
     )
     (transfer-hey u1 HEY_TREASURY)
@@ -78,7 +78,7 @@
     (asserts! (>= (var-get content-index) id) (err ERR_CANNOT_LIKE_NON_EXISTENT_CONTENT))
     ;; transfer 1 HEY to the principal that created the content
     (map-set like-state
-      { content-index: id } 
+      { content-index: id }
       { likes: (+ u1 (get likes (unwrap! (get-like-count id) (err u0)))) }
     )
     (transfer-hey u1 (unwrap-panic (get-message-publisher id)))
