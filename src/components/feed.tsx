@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, color, Flex, Stack, StackProps } from '@stacks/ui';
-import Avatar from 'boring-avatars';
+import { Avatar } from '@components/avatar';
 import { border } from '@common/utils';
 import { Caption, Text } from '@components/typography';
 import { FiArrowUpCircle } from 'react-icons/all';
@@ -9,6 +9,7 @@ import { Compose } from '@components/compose';
 import { useFeed } from '@hooks/use-feed';
 import { useUser } from '@hooks/use-user';
 import { truncateMiddle } from '@stacks/ui-utils';
+import { Heystack } from '@store/hey';
 
 const Message = ({
   isUser,
@@ -33,13 +34,7 @@ const Message = ({
   );
 };
 
-const ItemDetailsRow = ({
-  isUser,
-  item,
-}: {
-  isUser: boolean;
-  item: { content?: string; sender: string };
-}) => {
+const ItemDetailsRow = ({ isUser, item }: { isUser: boolean; item: Heystack }) => {
   return (
     <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
       <Stack alignItems="center" isInline pl={isUser ? 0 : 'loose'} pr={isUser ? 'loose' : 0}>
@@ -58,7 +53,7 @@ const FeedItemComponent = ({
 }: {
   index: number;
   isUser: boolean;
-  item: { content?: string; sender: string };
+  item: Heystack;
 }) => {
   return (
     <Stack
@@ -70,15 +65,14 @@ const FeedItemComponent = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
       wordBreak="break-word"
+      key={item.id}
       {...rest}
     >
       <Flex alignItems="flex-end">
-        <Box
+        <Avatar
           flexShrink={0}
           order={isUser ? 2 : 0}
-          as={Avatar}
           name={item.sender}
-          variant="beam"
           size="36px"
           mr={!isUser ? 'base' : 'unset'}
           ml={isUser ? 'base' : 'unset'}
@@ -115,7 +109,7 @@ export const Feed = (props: StackProps) => {
             <Stack spacing="loose">
               {feed.map((item, key) => {
                 const isUser = item.sender === addresses?.testnet;
-                return <FeedItemComponent index={key} key={key} item={item} isUser={isUser} />;
+                return <FeedItemComponent index={key} key={item.id} item={item} isUser={isUser} />;
               })}
             </Stack>
             <AlwaysScrollToBottom />

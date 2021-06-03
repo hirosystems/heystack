@@ -1,9 +1,9 @@
-import { Box, BoxProps } from '@stacks/ui';
-import Avatar from 'boring-avatars';
 import React from 'react';
+import { Box, BoxProps } from '@stacks/ui';
+import { Avatar } from '@components/avatar';
 import { useCurrentAddress } from '@hooks/use-current-address';
 
 export const UserAvatar = (props: BoxProps) => {
   const address = useCurrentAddress();
-  return <Box as={Avatar} name={address} variant="beam" size="40px" {...props} />;
+  return <Avatar name={address} size="40px" {...props} />;
 };

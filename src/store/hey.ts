@@ -11,6 +11,12 @@ import {
 } from '@blockstack/stacks-blockchain-api-types';
 import { atomWithQuery } from 'jotai/query';
 
+export interface Heystack {
+  sender: string;
+  content: string;
+  id: string;
+}
+
 export const incrementAtom = atom(0);
 
 export const userHeyBalanceAtom = atom(async get => {
@@ -54,34 +60,33 @@ export const heyTransactionsAtom = atomWithQuery<ContractCallTransaction[], stri
   },
 }));
 
-export const pendingTxsAtom = atomWithQuery<{ sender: string; content?: string }[], string>(
-  get => ({
-    queryKey: ['hey-pending-txs'],
-    ...(defaultOptions as any),
-    queryFn: async (): Promise<{ sender: string; content?: string }[]> => {
-      const client = get(transactionsClientAtom);
+export const pendingTxsAtom = atomWithQuery<Heystack[], string>(get => ({
+  queryKey: ['hey-pending-txs'],
+  ...(defaultOptions as any),
+  queryFn: async (): Promise<Heystack[]> => {
+    const client = get(transactionsClientAtom);
 
-      const txs = await client.getMempoolTransactionList({});
-      const heyTxs = (txs as MempoolTransactionListResponse).results
-        .filter(
-          tx =>
-            tx.tx_type === 'contract_call' &&
-            tx.contract_call.contract_id === 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack'
-        )
-        .map(tx => tx.tx_id);
-      const final = await Promise.all(
-        heyTxs.map(async txid => client.getTransactionById({ txId: txid }))
-      );
+    const txs = await client.getMempoolTransactionList({});
+    const heyTxs = (txs as MempoolTransactionListResponse).results
+      .filter(
+        tx =>
+          tx.tx_type === 'contract_call' &&
+          tx.contract_call.contract_id === 'ST21FTC82CCKE0YH9SK5SJ1D4XEMRA069FKV0VJ8N.heystack'
+      )
+      .map(tx => tx.tx_id);
+    const final = await Promise.all(
+      heyTxs.map(async txid => client.getTransactionById({ txId: txid }))
+    );
 
-      return (
-        (final as ContractCallTransaction[]).map(tx => ({
-          sender: tx.sender_address,
-          content: tx.contract_call.function_args?.[0].repr.replace(`u"`, '').slice(0, -1),
-        })) || []
-      );
-    },
-  })
-);
+    return (
+      (final as ContractCallTransaction[]).map(tx => ({
+        sender: tx.sender_address,
+        content: tx.contract_call.function_args?.[0].repr.replace(`u"`, '').slice(0, -1) as string,
+        id: tx.tx_id,
+      })) || []
+    );
+  },
+}));
 
 export const contentTransactionsAtom = atom(get => {
   const txs = get(heyTransactionsAtom);
@@ -91,7 +96,8 @@ export const contentTransactionsAtom = atom(get => {
     return {
       content,
       sender: tx.sender_address,
+      id: tx.tx_id,
     };
   });
-  return [...pending, ...feed].reverse();
+  return [...pending, ...feed].reverse() as Heystack[];
 });
