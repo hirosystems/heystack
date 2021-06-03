@@ -1,5 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
-import Avatar from 'boring-avatars';
+import React, { memo } from 'react';
 import { Box, IconButton, Stack, StackProps } from '@stacks/ui';
 import { Button } from '@components/button';
 import { border } from '@common/utils';

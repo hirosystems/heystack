@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, BoxProps } from '@stacks/ui';
+import { BoxProps } from '@stacks/ui';
 import { Avatar } from '@components/avatar';
 import { useCurrentAddress } from '@hooks/use-current-address';
 

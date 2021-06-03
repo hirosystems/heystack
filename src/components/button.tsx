@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button as _Button, ButtonProps } from '@stacks/ui';
 
 export const Button = (props: ButtonProps) => (
