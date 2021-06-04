@@ -9,5 +9,6 @@ export function useUser() {
     profile: user?.profile,
     addresses: user?.profile?.stxAddress,
     setUser,
+    isSignedIn: !!user,
   };
 }
