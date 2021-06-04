@@ -2,48 +2,48 @@ import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { atomWithQuery } from 'jotai/query';
 import { useNamesByAddress } from '@common/hooks/use-names-by-address';
-import { mainnetNetworkAtom } from './ui';
+import { useLocalNames } from '@common/hooks/use-local-names';
+import { mainnetNetworkAtom } from '@store/ui';
 
 const STALE_TIME = 30 * 60 * 1000;
 
 const makeKey = (networkUrl: string, address: string): string => {
   return `${networkUrl}__${address}`;
 };
-interface Param {
+
+interface NamesByAddressParam {
   networkUrl: string;
   address: string;
 }
 
-export const namesByAddressAtom = atomFamily<Param, string[]>((param: Param) =>
-  atomWithQuery(get => ({
-    queryKey: 'names',
-    queryFn: async (): Promise<string[]> => {
-      const res = await fetch(param.networkUrl + `/v1/addresses/stacks/${param.address}`);
-      const data = await res.json();
-      return data?.names || [];
-    },
-  }))
+export const namesByAddressAtom = atomFamily<NamesByAddressParam, string[]>(
+  (param: NamesByAddressParam) =>
+    atomWithQuery(get => ({
+      queryKey: 'names',
+      queryFn: async (): Promise<string[]> => {
+        const res = await fetch(param.networkUrl + `/v1/addresses/stacks/${param.address}`);
+        const data = await res.json();
+        return data?.names || [];
+      },
+    }))
 );
 
-function getLocalNames(networkUrl: string, address: string): [string[], number] | null {
-  const key = makeKey(networkUrl, address);
-  const value = localStorage.getItem(key);
-  if (!value) return null;
-  return JSON.parse(value);
+interface LocalNamesParam {
+  key: string;
+  data?: [string[], number];
 }
 
-function setLocalNames(networkUrl: string, address: string, data: [string[], number]): void {
-  const key = makeKey(networkUrl, address);
-  return localStorage.setItem(key, JSON.stringify(data));
-}
+export const localNamesAtom = atomFamily((param: LocalNamesParam) =>
+  atomWithStorage(param.key, param.data)
+);
 
 export const namesAtom = atomFamily((address: string) =>
   atom(get => {
     // We are temporarily forcing this to look for names on mainnet
     const network = get(mainnetNetworkAtom);
     if (!network) return null;
-
-    const local = getLocalNames(network.coreApiUrl, address);
+    const key = makeKey(network.coreApiUrl, address);
+    const local = useLocalNames(key);
 
     if (local) {
       const [names, timestamp] = local;
@@ -55,7 +55,7 @@ export const namesAtom = atomFamily((address: string) =>
     try {
       const names = useNamesByAddress(network.coreApiUrl, address);
       if (names?.length) {
-        setLocalNames(network.coreApiUrl, address, [names, Date.now()]);
+        useLocalNames(key, [names, Date.now()]);
       }
       return names || [];
     } catch (e) {
