@@ -104,13 +104,14 @@ export const pendingTxsAtom = atomWithQuery<Heystack[], string>(get => ({
         const attachment = tx.contract_call.function_args?.[1].repr
           .replace(`(some u"`, '')
           .slice(0, -1);
+
         return {
           sender: tx.sender_address,
           content: tx.contract_call.function_args?.[0].repr
             .replace(`u"`, '')
             .slice(0, -1) as string,
           id: tx.tx_id,
-          attachment,
+          attachment: attachment === 'non' ? undefined : attachment,
           timestamp: (tx as any).receipt_time,
           isPending: true,
         };
