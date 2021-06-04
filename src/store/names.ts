@@ -39,7 +39,7 @@ function setLocalNames(networkUrl: string, address: string, data: [string[], num
 }
 
 export const namesAtom = atomFamily((address: string) =>
-  atom(get => {
+  atom(async get => {
     // We are temporarily forcing this to look for names on mainnet
     const network = get(mainnetNetworkAtom);
     if (!network) return null;
