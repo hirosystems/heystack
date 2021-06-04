@@ -6,7 +6,15 @@
 
 (define-fungible-token hey-token)
 
+;; Mint developer tokens
 (ft-mint? hey-token u10000 contract-creator)
+(ft-mint? hey-token u10000 'ST399W7Z9WS0GMSNQGJGME5JADNKN56R65VGM5KGA) ;; fara
+(ft-mint? hey-token u10000 'ST1X6M947Z7E58CNE0H8YJVJTVKS9VW0PHEG3NHN3) ;; thomas
+(ft-mint? hey-token u10000 'ST1NY8TXACV7D74886MK05SYW2XA72XJMDVPF3F3D) ;; kyran
+(ft-mint? hey-token u10000 'ST34XEPDJJFJKFPT87CCZQCPGXR4PJ8ERFRP0F3GX) ;; jasper
+(ft-mint? hey-token u10000 'ST3AGWHGAZKQS4JQ67WQZW5X8HZYZ4ZBWPPNWNMKF) ;; andres
+(ft-mint? hey-token u10000 'ST17YZQB1228EK9MPHQXA8GC4G3HVWZ66X779FEBY) ;; esh
+(ft-mint? hey-token u10000 'ST3Q0M9WAVBW633CG72VHNFZM2H82D2BJMBX85WP4) ;; mark
 
 ;; get the token balance of owner
 (define-read-only (get-balance (owner principal))
@@ -44,11 +52,7 @@
 
 (define-public (gift-tokens (recipient principal))
   (begin
-  ;; (if
-    ;; (is-eq tx-sender contract-creator)
-      (print tx-sender)
-      (ok (ft-mint? hey-token u1 recipient))
-      ;; (ok (as-contract tx-sender))
-    ;; (err ERR-UNAUTHORIZED))
+    (asserts! (is-eq tx-sender recipient) (err u0))
+    (ft-mint? hey-token u1 recipient)
   )
 )
