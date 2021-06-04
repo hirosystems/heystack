@@ -39,14 +39,15 @@ const ItemLikes = ({ index }: { index: number }) => {
 
 const ItemDetailsRow = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => {
   const handleLikeHey = useHandleLikeHey();
+  const { isSignedIn } = useUser();
 
   return (
     <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
       {item.index ? (
         <Stack
-          onClick={isUser ? undefined : () => handleLikeHey(item.index as number)}
+          onClick={!isSignedIn || isUser ? undefined : () => handleLikeHey(item.index as number)}
           alignItems="center"
-          _hover={isUser ? undefined : { cursor: 'pointer', color: color('brand') }}
+          _hover={!isSignedIn || isUser ? undefined : { cursor: 'pointer', color: color('brand') }}
           isInline
           pl={isUser ? 0 : 'loose'}
           pr={isUser ? 'loose' : 0}
