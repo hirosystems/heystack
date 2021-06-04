@@ -13,6 +13,15 @@ import { Heystack } from '@store/hey';
 import { useGetItemLikes } from '@hooks/use-get-item-likes';
 import { useHandleLikeHey } from '@hooks/use-like-hey';
 import { toRelativeTime } from '@common/time';
+import { convertAddress } from '@common/addresses';
+import { useAtomValue } from 'jotai/utils';
+import { namesAtom } from '@store/names';
+
+const Address = ({ item }: { item: Heystack }) => {
+  const address = convertAddress(item.sender, 'mainnet');
+  const names = useAtomValue(namesAtom(address));
+  return <Caption>{names?.[0] || truncateMiddle(item.sender)}</Caption>;
+};
 
 const Message = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => {
   return (
@@ -24,7 +33,13 @@ const Message = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => 
       isInline
     >
       <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
-        {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
+        {!isUser && (
+          <Box>
+            <React.Suspense fallback={<Caption>{truncateMiddle(item.sender)}</Caption>}>
+              <Address item={item} />
+            </React.Suspense>
+          </Box>
+        )}
         <Text>{item.content}</Text>
         {item.attachment ? (
           <Box maxWidth="100%" borderRadius="10px" as="img" src={item.attachment} />
@@ -38,7 +53,6 @@ const ItemLikes = ({ index }: { index: number }) => {
   const likes = useGetItemLikes(index);
   return <Caption color="currentColor">{likes}</Caption>;
 };
-
 const ItemDetailsRow = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => {
   const handleLikeHey = useHandleLikeHey();
   const { isSignedIn } = useUser();

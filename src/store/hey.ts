@@ -1,16 +1,16 @@
-import {atom} from 'jotai';
-import {userAtom} from '@store/auth';
-import {accountsClientAtom, smartContractsClientAtom, transactionsClientAtom} from '@store/api';
-import {HEY_CONTRACT, HEY_TOKEN_ADDRESS, MESSAGE_FUNCTION} from '@common/constants';
-import {principalCV} from '@stacks/transactions/dist/clarity/types/principalCV';
-import {cvToHex, cvToJSON, cvToString, hexToCV, uintCV} from '@stacks/transactions';
+import { atom } from 'jotai';
+import { userAtom } from '@store/auth';
+import { accountsClientAtom, smartContractsClientAtom, transactionsClientAtom } from '@store/api';
+import { HEY_CONTRACT, HEY_TOKEN_ADDRESS, MESSAGE_FUNCTION } from '@common/constants';
+import { principalCV } from '@stacks/transactions/dist/clarity/types/principalCV';
+import { cvToHex, cvToJSON, cvToString, hexToCV, uintCV } from '@stacks/transactions';
 import {
   ContractCallTransaction,
   MempoolTransactionListResponse,
   TransactionResults,
 } from '@blockstack/stacks-blockchain-api-types';
-import {atomWithQuery} from 'jotai/query';
-import {atomFamily} from 'jotai/utils';
+import { atomWithQuery } from 'jotai/query';
+import { atomFamily } from 'jotai/utils';
 
 export interface Heystack {
   sender: string;
@@ -74,7 +74,7 @@ export const heyTransactionsAtom = atomWithQuery<ContractCallTransaction[], stri
       )
       .map(tx => tx.tx_id);
 
-    const final = await Promise.all(txids.map(async txId => txClient.getTransactionById({txId})));
+    const final = await Promise.all(txids.map(async txId => txClient.getTransactionById({ txId })));
     return final as ContractCallTransaction[];
   },
 }));
@@ -97,7 +97,7 @@ export const pendingTxsAtom = atomWithQuery<Heystack[], string>(get => ({
       )
       .map(tx => tx.tx_id);
 
-    const final = await Promise.all(heyTxs.map(async txId => client.getTransactionById({txId})));
+    const final = await Promise.all(heyTxs.map(async txId => client.getTransactionById({ txId })));
 
     return (
       (final as ContractCallTransaction[]).map(tx => {
@@ -130,7 +130,7 @@ export const contentTransactionsAtom = atom(get => {
       .slice(0, -1);
     const contractLog = tx.events?.[0]
       ? (tx.events?.[0] as any)?.event_type === 'smart_contract_log' &&
-      (tx.events?.[0] as any).contract_log
+        (tx.events?.[0] as any).contract_log
         ? cvToJSON(hexToCV((tx.events?.[0] as any)?.contract_log?.value?.hex))
         : null
       : null;
