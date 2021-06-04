@@ -62,7 +62,7 @@ describe('Hey token', () => {
 
     async function sendMessage(from: string, message: string) {
       const tx = heyClient.createTransaction({
-        method: { name: 'send-message', args: [cvToString(stringUtf8CV(message))] },
+        method: { name: 'send-message', args: [cvToString(stringUtf8CV(message)), 'none'] },
       });
       tx.sign(from);
       return heyClient.submitTransaction(tx);
