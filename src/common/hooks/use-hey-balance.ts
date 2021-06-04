@@ -1,6 +1,8 @@
 import { useAtomValue } from 'jotai/utils';
 import { userHeyBalanceAtom } from '@store/hey';
+import { useCurrentAddress } from '@hooks/use-current-address';
 
 export function useHeyBalance() {
-  return useAtomValue(userHeyBalanceAtom);
+  const address = useCurrentAddress();
+  return useAtomValue(userHeyBalanceAtom(address));
 }
