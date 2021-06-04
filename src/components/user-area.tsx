@@ -12,7 +12,7 @@ import { truncateMiddle } from '@stacks/ui-utils';
 import { useUserSession } from '@hooks/use-usersession';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
 import { useHeyBalance } from '@hooks/use-hey-balance';
-import { useCurrentMainnetAddress } from '@hooks/use-current-address';
+import { useCurrentAddress, useCurrentMainnetAddress } from '@hooks/use-current-address';
 import { UserAvatar } from '@components/user-avatar';
 import { useAccountNames } from '@common/hooks/use-account-names';
 
@@ -63,9 +63,11 @@ const AccountNameComponent = memo(() => {
   const { user } = useUser();
   // Temporarily getting names from mainnet
   const address = useCurrentMainnetAddress();
+  const testnetAddress = useCurrentAddress();
   const names = useAccountNames(address);
+  console.log(names);
   const name = names?.[0];
-  return <Text mb="tight">{name || user?.username || truncateMiddle(address)}</Text>;
+  return <Text mb="tight">{name || user?.username || truncateMiddle(testnetAddress)}</Text>;
 });
 
 const BalanceComponent = memo(() => {

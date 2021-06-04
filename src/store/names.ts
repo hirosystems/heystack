@@ -9,6 +9,7 @@ const STALE_TIME = 30 * 60 * 1000;
 const makeKey = (networkUrl: string, address: string): string => {
   return `${networkUrl}__${address}`;
 };
+
 interface Param {
   networkUrl: string;
   address: string;
@@ -53,7 +54,12 @@ export const namesAtom = atomFamily((address: string) =>
     }
 
     try {
-      const names = useNamesByAddress(network.coreApiUrl, address);
+      const names = get(
+        namesByAddressAtom({
+          networkUrl: network.coreApiUrl,
+          address,
+        })
+      );
       if (names?.length) {
         setLocalNames(network.coreApiUrl, address, [names, Date.now()]);
       }
