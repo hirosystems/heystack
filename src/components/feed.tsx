@@ -12,25 +12,27 @@ import { truncateMiddle } from '@stacks/ui-utils';
 import { Heystack } from '@store/hey';
 import { useGetItemLikes } from '@hooks/use-get-item-likes';
 import { useHandleLikeHey } from '@hooks/use-like-hey';
+import { toRelativeTime } from '@common/time';
 
-const Message = memo(
-  ({ isUser, item }: { isUser: boolean; item: { content?: string; sender: string } }) => {
-    return (
-      <Stack
-        border={border(isUser ? 'bg-4' : undefined)}
-        bg={isUser ? color('bg-4') : color('bg')}
-        borderRadius="24px"
-        p="loose"
-        isInline
-      >
-        <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
-          {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
-          <Text>{item.content}</Text>
-        </Stack>
+const Message = memo(({ isUser, item }: { isUser: boolean; item: Heystack }) => {
+  return (
+    <Stack
+      border={border(isUser ? 'bg-4' : undefined)}
+      bg={isUser ? color('bg-4') : color('bg')}
+      borderRadius="24px"
+      p="loose"
+      isInline
+    >
+      <Stack alignItems={isUser ? 'flex-end' : 'unset'} spacing="base">
+        {!isUser && <Caption>{truncateMiddle(item.sender)}</Caption>}
+        <Text>{item.content}</Text>
+        {item.attachment ? (
+          <Box maxWidth="100%" borderRadius="10px" as="img" src={item.attachment} />
+        ) : null}
       </Stack>
-    );
-  }
-);
+    </Stack>
+  );
+});
 
 const ItemLikes = ({ index }: { index: number }) => {
   const likes = useGetItemLikes(index);
@@ -42,26 +44,29 @@ const ItemDetailsRow = memo(({ isUser, item }: { isUser: boolean; item: Heystack
   const { isSignedIn } = useUser();
 
   return (
-    <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
-      {item.index ? (
-        <Stack
-          onClick={!isSignedIn || isUser ? undefined : () => handleLikeHey(item.index as number)}
-          alignItems="center"
-          _hover={!isSignedIn || isUser ? undefined : { cursor: 'pointer', color: color('brand') }}
-          isInline
-          pl={isUser ? 0 : 'loose'}
-          pr={isUser ? 'loose' : 0}
-          color={color('text-caption')}
-        >
-          <Box as={FiArrowUpCircle} size="14px" color="currentColor" />
-          {!item.isPending && item.index && (
-            <React.Suspense fallback={<Caption color="currentColor">...</Caption>}>
-              <ItemLikes index={item.index} />
-            </React.Suspense>
-          )}
-        </Stack>
-      ) : null}
-    </Stack>
+    <Box pl={isUser ? 0 : 'loose'} pr={isUser ? 'loose' : 0}>
+      <Stack isInline pl={isUser ? 0 : '36px'} pr={!isUser ? 0 : '36px'}>
+        <Caption>{toRelativeTime(item.timestamp * 1000)}</Caption>
+        {item.index ? (
+          <Stack
+            onClick={!isSignedIn || isUser ? undefined : () => handleLikeHey(item.index as number)}
+            alignItems="center"
+            _hover={
+              !isSignedIn || isUser ? undefined : { cursor: 'pointer', color: color('brand') }
+            }
+            isInline
+            color={color('text-caption')}
+          >
+            <Box as={FiArrowUpCircle} size="14px" color="currentColor" />
+            {!item.isPending && item.index && (
+              <React.Suspense fallback={<Caption color="currentColor">...</Caption>}>
+                <ItemLikes index={item.index} />
+              </React.Suspense>
+            )}
+          </Stack>
+        ) : null}
+      </Stack>
+    </Box>
   );
 });
 

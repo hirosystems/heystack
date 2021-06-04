@@ -5797,6 +5797,11 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
+dayjs@^1.10.5:
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.5.tgz#5600df4548fc2453b3f163ebb2abbe965ccfb986"
+  integrity sha512-BUFis41ikLz+65iH6LHQCDm4YPMj5r1YFLdupPIyM4SGcXMmtiLQ7U37i+hGS8urIuqe7I/ou3IS1jVc4nbN4g==
+
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -7386,6 +7391,11 @@ globby@^6.1.0:
     object-assign "^4.0.1"
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
+
+goober@^2.0.35:
+  version "2.0.37"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.0.37.tgz#5598c41f4c19bc1fca2c926e876a58a685faffb8"
+  integrity sha512-wgj5C7IJX2+MyHZ4TgOA+hLL1mCDW+jGorQ5KCMLF1ofE9gQkfbo1s8txIrzIsAX65XRTm0qaipolId2KMYUkw==
 
 good-listener@^1.2.2:
   version "1.2.2"
@@ -11720,6 +11730,13 @@ react-error-overlay@^6.0.9:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
 
+react-hot-toast@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-hot-toast/-/react-hot-toast-2.0.0.tgz#6e83b2937a20b040acb2d5fd08bcf32561b7832a"
+  integrity sha512-J0J2rcSvKetlziVquwESgk85pV9JB0Dz3RJIZcAEv7CWU2y2z8BQqxmZHZUxjPKIBGPqXAocZch4Kj4oUdX4+w==
+  dependencies:
+    goober "^2.0.35"
+
 react-hotkeys-hook@^2.4.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/react-hotkeys-hook/-/react-hotkeys-hook-2.4.1.tgz#9e495cbe9872a2bcf9b0f8ff776f031064d33968"
@@ -13452,6 +13469,11 @@ tryer@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/tryer/-/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==
+
+ts-debounce@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ts-debounce/-/ts-debounce-3.0.0.tgz#9beedf59c04de3b5bef8ff28bd6885624df357be"
+  integrity sha512-7jiRWgN4/8IdvCxbIwnwg2W0bbYFBH6BxFqBjMKk442t7+liF2Z1H6AUCcl8e/pD93GjPru+axeiJwFmRww1WQ==
 
 ts-essentials@^2.0.3:
   version "2.0.12"

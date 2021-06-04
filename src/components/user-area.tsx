@@ -92,10 +92,6 @@ const Menu: React.FC = memo(() => {
       _hover={{
         cursor: 'pointer',
       }}
-      position="fixed"
-      top="extra-loose"
-      right="extra-loose"
-      zIndex={9999}
       {...bind}
     >
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
@@ -115,14 +111,12 @@ const Menu: React.FC = memo(() => {
   );
 });
 
-export const Auth: React.FC = memo(() => {
+export const UserArea: React.FC = memo(() => {
   const [user] = useAtom(userAtom);
 
-  return user ? (
-    <Menu />
-  ) : (
-    <Box p="loose">
-      <ConnectWalletButton />
+  return (
+    <Box position="fixed" top="extra-loose" right="extra-loose" zIndex={9999}>
+      {user ? <Menu /> : <ConnectWalletButton />}
     </Box>
   );
 });

@@ -1,23 +1,53 @@
 import React, { memo } from 'react';
-import { Box, IconButton, Stack, StackProps } from '@stacks/ui';
+import { Box, Fade, IconButton, Stack, StackProps } from '@stacks/ui';
 import { Button } from '@components/button';
 import { border } from '@common/utils';
 import { Caption, Text, Title } from '@components/typography';
 import { ConnectGraphic } from '@components/connect-graphic';
-import { FiX } from 'react-icons/fi';
+import { FiChevronDown, FiX } from 'react-icons/fi';
 import { useUser } from '@hooks/use-user';
 import { ConnectWalletButton } from '@components/connect-wallet-button';
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS } from '@store/ui';
 import { useHandleClaimHey } from '@hooks/use-claim-hey';
 import { UserAvatar } from '@components/user-avatar';
+import { useShowWelcome } from '@hooks/use-show-welcome';
+import { ClaimHeyButton } from '@components/claim-hey-button';
+import { useHeyBalance } from '@hooks/use-hey-balance';
 
-const AboutSection = memo((props: StackProps) => {
+const HiddenTitle = memo(() => {
+  const { toggleIsShowing } = useShowWelcome();
+
   return (
-    <Stack spacing="tight" {...props}>
+    <Stack alignItems="center" isInline justifyContent="space-between">
+      <Box />
+      <IconButton
+        onClick={toggleIsShowing}
+        size="28px"
+        iconSize="16px"
+        bg="transparent"
+        as={'button'}
+        icon={FiChevronDown}
+        border={0}
+      />
+    </Stack>
+  );
+});
+const AboutSection = memo((props: StackProps) => {
+  const { toggleIsShowing } = useShowWelcome();
+  return (
+    <Stack spacing="base" {...props}>
       <Stack alignItems="center" isInline justifyContent="space-between">
-        <Title variant="h3">About Heystack</Title>
-        <IconButton bg="transparent" as={'button'} icon={FiX} border={0} />
+        <Box />
+        <IconButton
+          onClick={toggleIsShowing}
+          size="28px"
+          iconSize="16px"
+          bg="transparent"
+          as={'button'}
+          icon={FiX}
+          border={0}
+        />
       </Stack>
       <Caption variant="c1">
         Heystack is a decentralized chat app built on Stacks. 💬 Spend HEY to chat and upvote, 💸
@@ -49,9 +79,8 @@ const SignedOutView: React.FC<StackProps> = ({ ...props }) => {
   );
 };
 const SignedInView: React.FC<StackProps> = ({ ...props }) => {
-  const { isLoading } = useLoading(LOADING_KEYS.CLAIM_HEY);
-  const handleFaucetCall = useHandleClaimHey();
-
+  const balance = useHeyBalance();
+  if (balance !== '0') return null;
   return (
     <Stack
       alignItems="center"
@@ -65,9 +94,7 @@ const SignedInView: React.FC<StackProps> = ({ ...props }) => {
       <Text maxWidth="24ch" fontWeight={500}>
         Welcome to Heystack! Claim your 100 HEY to start chatting{' '}
       </Text>
-      <Button isLoading={isLoading} onClick={handleFaucetCall}>
-        Claim HEY
-      </Button>
+      <ClaimHeyButton />
     </Stack>
   );
 };
@@ -84,7 +111,9 @@ const UserSection = memo((props: StackProps) => {
       textAlign="center"
       {...props}
     >
-      {!user ? <SignedOutView /> : <SignedInView onClick={() => console.log('click')} />}
+      <React.Suspense fallback={<></>}>
+        {!user ? <SignedOutView /> : <SignedInView />}
+      </React.Suspense>
     </Stack>
   );
 });
@@ -100,18 +129,55 @@ const LearnMoreSection = memo((props: StackProps) => {
   );
 });
 export const WelcomePanel = memo(props => {
+  const { isShowing } = useShowWelcome();
   return (
-    <Stack
-      position="absolute"
-      p="loose"
-      maxWidth="336px"
-      border={border()}
-      borderRadius="12px"
-      spacing="extra-loose"
-    >
-      <AboutSection />
-      <UserSection />
-      <LearnMoreSection />
-    </Stack>
+    <>
+      <Stack
+        position="absolute"
+        p="loose"
+        maxWidth="336px"
+        borderRadius="12px"
+        spacing="extra-loose"
+        width="100%"
+      >
+        <Title py="tight" variant="h3">
+          About Heystack
+        </Title>
+      </Stack>
+      <Fade in={isShowing}>
+        {styles => (
+          <Stack
+            position="absolute"
+            p="loose"
+            maxWidth="336px"
+            border={border()}
+            borderRadius="12px"
+            spacing="extra-loose"
+            minHeight="calc(100vh - 64px)"
+            style={styles}
+          >
+            <AboutSection />
+            <UserSection />
+            <LearnMoreSection />
+          </Stack>
+        )}
+      </Fade>
+      <Fade in={!isShowing}>
+        {styles => (
+          <Stack
+            width="100%"
+            position="absolute"
+            p="loose"
+            maxWidth="336px"
+            spacing="extra-loose"
+            minHeight="calc(100vh - 64px)"
+            style={styles}
+            border="1px solid transparent"
+          >
+            <HiddenTitle />
+          </Stack>
+        )}
+      </Fade>
+    </>
   );
 });

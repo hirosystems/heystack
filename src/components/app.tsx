@@ -7,12 +7,14 @@ import { Feed } from '@components/feed';
 import { useAuthOptions } from '@hooks/use-auth-options';
 import 'modern-normalize/modern-normalize.css';
 import { PendingOverlay } from '@components/pending-overlay';
+import { Toaster } from 'react-hot-toast';
 
 const AppWrapper: React.FC = memo(({ children }) => {
   const authOptions = useAuthOptions();
   return (
     <ThemeProvider>
       <ColorModeProvider defaultMode="light">
+        <Toaster position="bottom-right" />
         <Connect authOptions={authOptions}>{children}</Connect>
       </ColorModeProvider>
     </ThemeProvider>
