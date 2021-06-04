@@ -1,6 +1,6 @@
 import { Client, Provider, ProviderRegistry } from '@blockstack/clarity';
 import { cvToString, uintCV, stringUtf8CV } from '@stacks/transactions';
-import { HeyTokenClient } from '../src/hey-token-client';
+import { HeyTokenClient } from './hey-token-client';
 
 let traitClient: Client;
 let heyClient: Client;
@@ -10,6 +10,7 @@ let heyTokenClient: HeyTokenClient;
 const contractDelployer = 'ST3J2GVMMM2R07ZFBJDWTYEYAR8FZH5WKDTFJ9AHA';
 const bob = 'ST1TWA18TSWGDAFZT377THRQQ451D1MSEM69C761';
 const charles = 'ST50GEWRE7W5B02G3J3K19GNDDAPC3XPZPYQRQDW';
+const derek = 'ST26AE5W55C7MCSH2MRTT22K2555YWJ9BFRCW56YX';
 
 describe('Hey token', () => {
   beforeEach(async () => {
@@ -28,10 +29,8 @@ describe('Hey token', () => {
   test('The contracts are valid', async () => {
     await traitClient.checkContract();
     await traitClient.deployContract();
-
     await heyTokenClient.checkContract();
     await heyTokenClient.deployContract();
-
     await heyClient.checkContract();
     await heyClient.deployContract();
   });
@@ -146,6 +145,15 @@ describe('Hey token', () => {
         await requestHey(bob);
         const bobsBalance = await heyTokenClient.balanceOf(bob);
         expect(bobsBalance).toEqual(2);
+      });
+
+      test('tokens can only be sent to the contract caller', async () => {
+        const tx = heyClient.createTransaction({
+          method: { name: 'request-hey', args: [`'${bob}`] },
+        });
+        tx.sign(charles);
+        await heyClient.submitTransaction(tx);
+        expect(await heyTokenClient.balanceOf(bob)).toEqual(0);
       });
     });
 

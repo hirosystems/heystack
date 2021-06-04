@@ -5,6 +5,7 @@
 
 (define-constant ERR_INVALID_CONTENT u0)
 (define-constant ERR_CANNOT_LIKE_NON_EXISTENT_CONTENT u1)
+(define-constant ERR_CAN_ONLY_REQUEST_HEY_FOR_YOURSELF u2)
 
 (define-constant HEY_TREASURY 'ST18QBQ9HBSGZ76SKYVN970Q4MVZHJDAX1S7QSP62)
 
@@ -48,11 +49,8 @@
   )
 )
 
-
 (define-private (get-balance (recipient principal))
-  (ok
-    (unwrap-panic (contract-call? 'ST3J2GVMMM2R07ZFBJDWTYEYAR8FZH5WKDTFJ9AHA.hey-token get-balance recipient))
-  )
+  (contract-call? 'ST3J2GVMMM2R07ZFBJDWTYEYAR8FZH5WKDTFJ9AHA.hey-token get-balance recipient)
 )
 
 ;;
@@ -74,9 +72,7 @@
 
 (define-public (like-message (id uint))
   (begin
-    ;; cannot like content that doesn't exist
     (asserts! (>= (var-get content-index) id) (err ERR_CANNOT_LIKE_NON_EXISTENT_CONTENT))
-    ;; transfer 1 HEY to the principal that created the content
     (map-set like-state
       { content-index: id }
       { likes: (+ u1 (get likes (unwrap! (get-like-count id) (err u0)))) }
@@ -89,11 +85,8 @@
 ;; Token contract interactions
 (define-public (request-hey (recipient principal))
   (begin
-    ;; add necessary guards
-    ;; send hey to requesting person
-    (ok
-      (as-contract (contract-call? 'ST3J2GVMMM2R07ZFBJDWTYEYAR8FZH5WKDTFJ9AHA.hey-token gift-tokens recipient))
-    )
+    (asserts! (is-eq contract-caller recipient) (err ERR_CAN_ONLY_REQUEST_HEY_FOR_YOURSELF))
+    (contract-call? 'ST3J2GVMMM2R07ZFBJDWTYEYAR8FZH5WKDTFJ9AHA.hey-token gift-tokens recipient)
   )
 )
 
