@@ -1,19 +1,29 @@
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
-import { useFetch } from '@common/hooks/use-fetch';
-import { networkAtom } from './ui';
+import { atomWithQuery } from 'jotai/query';
+import { useNamesByAddress } from '@common/hooks/use-names-by-address';
+import { mainnetNetworkAtom } from './ui';
 
 const STALE_TIME = 30 * 60 * 1000;
 
-async function fetchNamesByAddress(networkUrl: string, address: string): Promise<string[]> {
-  const res = await useFetch(networkUrl + `/v1/addresses/stacks/${address}`);
-  const data = await res.json();
-  return data?.names || [];
+const makeKey = (networkUrl: string, address: string): string => {
+  return `${networkUrl}__${address}`;
+};
+interface Param {
+  networkUrl: string;
+  address: string;
 }
 
-function makeKey(networkUrl: string, address: string): string {
-  return `${networkUrl}__${address}`;
-}
+export const namesByAddressAtom = atomFamily<Param, string[]>((param: Param) =>
+  atomWithQuery(get => ({
+    queryKey: 'names',
+    queryFn: async (): Promise<string[]> => {
+      const res = await fetch(param.networkUrl + `/v1/addresses/stacks/${param.address}`);
+      const data = await res.json();
+      return data?.names || [];
+    },
+  }))
+);
 
 function getLocalNames(networkUrl: string, address: string): [string[], number] | null {
   const key = makeKey(networkUrl, address);
@@ -28,8 +38,9 @@ function setLocalNames(networkUrl: string, address: string, data: [string[], num
 }
 
 export const namesAtom = atomFamily((address: string) =>
-  atom(async get => {
-    const network = get(networkAtom);
+  atom(get => {
+    // We are temporarily forcing this to look for names on mainnet
+    const network = get(mainnetNetworkAtom);
     if (!network) return null;
 
     const local = getLocalNames(network.coreApiUrl, address);
@@ -42,7 +53,7 @@ export const namesAtom = atomFamily((address: string) =>
     }
 
     try {
-      const names = await fetchNamesByAddress(network.coreApiUrl, address);
+      const names = useNamesByAddress(network.coreApiUrl, address);
       if (names?.length) {
         setLocalNames(network.coreApiUrl, address, [names, Date.now()]);
       }
