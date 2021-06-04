@@ -1,8 +1,7 @@
 import { atom } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { atomWithQuery } from 'jotai/query';
-import { useNamesByAddress } from '@common/hooks/use-names-by-address';
-import { mainnetNetworkAtom } from './ui';
+import { mainnetNetworkAtom } from '@store/ui';
 
 const STALE_TIME = 30 * 60 * 1000;
 
@@ -53,7 +52,12 @@ export const namesAtom = atomFamily((address: string) =>
     }
 
     try {
-      const names = useNamesByAddress(network.coreApiUrl, address);
+      const names = get(
+        namesByAddressAtom({
+          networkUrl: network.coreApiUrl,
+          address,
+        })
+      );
       if (names?.length) {
         setLocalNames(network.coreApiUrl, address, [names, Date.now()]);
       }

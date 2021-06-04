@@ -103,6 +103,8 @@ const Menu: React.FC = memo(() => {
         <Stack spacing="base-tight">
           <React.Suspense fallback={<></>}>
             <AccountNameComponent />
+          </React.Suspense>
+          <React.Suspense fallback={<></>}>
             <Stack isInline alignItems="center">
               <BalanceComponent />
               <FiChevronDown />
@@ -121,7 +123,7 @@ export const Auth: React.FC = memo(() => {
   return user ? (
     <Menu />
   ) : (
-    <Box p="loose">
+    <Box position="fixed" top="extra-loose" right="extra-loose" p="base">
       <ConnectWalletButton />
     </Box>
   );
