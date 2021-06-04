@@ -55,9 +55,9 @@
 
 ;;
 ;; Public functions
-(define-public (send-message (content (string-utf8 140)))
+(define-public (send-message (content (string-utf8 140) ) (attachment-uri (optional (string-utf8 256))))
   (let ((id (unwrap! (increment-content-index) (err u0))))
-    (print { content: content, publisher: tx-sender, index: id })
+    (print { content: content, publisher: tx-sender, index: id, attachment-uri: attachment-uri })
     (map-set like-state
       { content-index: id }
       { likes: u0 }
