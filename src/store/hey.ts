@@ -113,15 +113,15 @@ export const contentTransactionsAtom = atom(get => {
   const feed = txs.map(tx => {
     const content = tx.contract_call.function_args?.[0].repr.replace(`u"`, '').slice(0, -1);
     const contractLog =
-      tx.events?.[0].event_type === 'smart_contract_log'
-        ? cvToJSON(hexToCV(tx.events?.[0].contract_log.value.hex))
+      tx.events?.[0]?.event_type === 'smart_contract_log'
+        ? cvToJSON(hexToCV(tx.events?.[0]?.contract_log.value.hex))
         : null;
 
     return {
       content,
       sender: tx.sender_address,
       id: tx.tx_id,
-      index: contractLog.value.index.value,
+      index: contractLog?.value.index.value,
       timestamp: tx.burn_block_time,
     };
   });
