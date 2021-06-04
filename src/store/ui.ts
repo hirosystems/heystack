@@ -21,3 +21,6 @@ export const mainnetNetworkAtom = atom(() => {
   return _network;
 });
 export const showPendingOverlayAtom = atom(false);
+
+export const showAboutAtom = atom(true);
+export const booleanAtom = atomFamily((key: string) => atom(false));

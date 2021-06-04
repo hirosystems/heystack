@@ -1,6 +1,6 @@
 import { useLoading } from '@hooks/use-loading';
 import { LOADING_KEYS, showPendingOverlayAtom } from '@store/ui';
-import { useConnect } from '@stacks/connect-react';
+import { FinishedTxPayload, useConnect } from '@stacks/connect-react';
 import { useNetwork } from '@hooks/use-network';
 import { useCallback } from 'react';
 import {
@@ -14,6 +14,7 @@ import { useCurrentAddress } from '@hooks/use-current-address';
 import { useHeyContract } from '@hooks/use-hey-contract';
 import { LIKE_FUNCTION } from '@common/constants';
 import BN from 'bn.js';
+import { toast } from 'react-hot-toast';
 
 export function useHandleLikeHey() {
   const setShowPendingOverlay = useUpdateAtom(showPendingOverlayAtom);
@@ -23,9 +24,10 @@ export function useHandleLikeHey() {
   const { doContractCall } = useConnect();
   const network = useNetwork();
   const onFinish = useCallback(() => {
+    toast.success('Your like has been submitted!');
     void setIsLoading(false);
     void setShowPendingOverlay(false);
-  }, [setIsLoading, setShowPendingOverlay]);
+  }, [setIsLoading, setShowPendingOverlay, toast]);
   const onCancel = useCallback(() => {
     void setIsLoading(false);
     void setShowPendingOverlay(false);
@@ -46,12 +48,10 @@ export function useHandleLikeHey() {
             address,
             FungibleConditionCode.Equal,
             new BN(1),
-            createAssetInfo(contractAddress, 'hey-token-2', 'hey-token')
+            createAssetInfo(contractAddress, 'hey-token', 'hey-token')
           ),
         ],
-        onFinish: () => {
-          onFinish();
-        },
+        onFinish,
         onCancel,
         network,
         stxAddress: address,

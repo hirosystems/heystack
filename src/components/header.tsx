@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Box, Flex, Stack, StackProps } from '@stacks/ui';
 import { Logo } from '@components/logo';
-import { Auth } from '@components/auth';
+import { UserArea } from '@components/user-area';
 
 export const Header = memo((props: StackProps) => (
   <>
@@ -11,6 +11,6 @@ export const Header = memo((props: StackProps) => (
         <Logo width="200px" maxWidth="200px" mx="auto" />
       </Stack>
     </Stack>
-    <Auth />
+    <UserArea />
   </>
 ));
