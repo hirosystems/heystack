@@ -24,29 +24,30 @@ export interface Heystack {
 
 export const incrementAtom = atom(0);
 
-export const userHeyBalanceAtom = atomWithQuery<string, string>(get => ({
-  queryKey: ['balance'],
-  refetchInterval: 5000,
-  ...(defaultOptions as any),
-  queryFn: async (): Promise<string | undefined> => {
-    const user = get(userAtom);
-    if (!user?.profile?.stxAddress?.testnet) return;
-    const client = get(smartContractsClientAtom);
-    const [contractAddress, contractName] = HEY_TOKEN_ADDRESS.split('.');
-    const data = await client.callReadOnlyFunction({
-      contractAddress,
-      contractName,
-      functionName: 'get-balance',
-      readOnlyFunctionArgs: {
-        sender: user?.profile?.stxAddress?.testnet || '',
-        arguments: [cvToHex(principalCV(user?.profile?.stxAddress?.testnet || ''))],
-      },
-    });
-    if (data.okay && data.result) {
-      return cvToString(hexToCV(data.result)).replace('(ok u', '').replace(')', '');
-    }
-  },
-}));
+export const userHeyBalanceAtom = atomFamily((address: string) =>
+  atomWithQuery<string, string>(get => ({
+    queryKey: ['balance', address],
+    refetchInterval: 5000,
+    ...(defaultOptions as any),
+    queryFn: async (): Promise<string | undefined> => {
+      if (!address) return;
+      const client = get(smartContractsClientAtom);
+      const [contractAddress, contractName] = HEY_TOKEN_ADDRESS.split('.');
+      const data = await client.callReadOnlyFunction({
+        contractAddress,
+        contractName,
+        functionName: 'get-balance',
+        readOnlyFunctionArgs: {
+          sender: address,
+          arguments: [cvToHex(principalCV(address || ''))],
+        },
+      });
+      if (data.okay && data.result) {
+        return cvToString(hexToCV(data.result)).replace('(ok u', '').replace(')', '');
+      }
+    },
+  }))
+);
 
 const defaultOptions = {
   refetchOnReconnect: true,
