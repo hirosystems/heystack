@@ -65,7 +65,6 @@ const AccountNameComponent = memo(() => {
   const address = useCurrentMainnetAddress();
   const testnetAddress = useCurrentAddress();
   const names = useAccountNames(address);
-  console.log(names);
   const name = names?.[0];
   return <Text mb="tight">{name || user?.username || truncateMiddle(testnetAddress)}</Text>;
 });
@@ -81,6 +80,7 @@ const Menu: React.FC = memo(() => {
   const [isHovered, setIsHovered] = useState(false);
   const bind = useHover(setIsHovered);
   const handleRemoveHover = useCallback(() => setIsHovered(false), [setIsHovered]);
+  const testnetAddress = useCurrentAddress();
 
   const handleSignOut = useCallback(() => {
     handleRemoveHover();
@@ -99,13 +99,15 @@ const Menu: React.FC = memo(() => {
       <Stack alignItems="center" flexGrow={1} spacing="loose" p="base" isInline>
         <UserAvatar />
         <Stack spacing="base-tight">
-          <React.Suspense fallback={<></>}>
+          <React.Suspense fallback={<Text mb="tight">{truncateMiddle(testnetAddress)}</Text>}>
             <AccountNameComponent />
-            <Stack isInline alignItems="center">
-              <BalanceComponent />
-              <FiChevronDown />
-            </Stack>
           </React.Suspense>
+          <Stack isInline alignItems="center">
+            <React.Suspense fallback={<Caption pr="tight">-- HEY</Caption>}>
+              <BalanceComponent />
+            </React.Suspense>
+            <FiChevronDown />
+          </Stack>
         </Stack>
       </Stack>
       <Dropdown onSignOut={handleSignOut} show={isHovered} />

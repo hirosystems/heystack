@@ -1,7 +1,5 @@
 import { atom } from 'jotai';
-import { atomFamily, atomWithStorage } from 'jotai/utils';
-import { atomWithQuery } from 'jotai/query';
-import { useNamesByAddress } from '@common/hooks/use-names-by-address';
+import { atomFamily } from 'jotai/utils';
 import { mainnetNetworkAtom } from './ui';
 
 const STALE_TIME = 30 * 60 * 1000;
@@ -15,17 +13,6 @@ interface Param {
   address: string;
 }
 
-export const namesByAddressAtom = atomFamily<Param, string[]>((param: Param) =>
-  atomWithQuery(get => ({
-    queryKey: 'names',
-    queryFn: async (): Promise<string[]> => {
-      const res = await fetch(param.networkUrl + `/v1/addresses/stacks/${param.address}`);
-      const data = await res.json();
-      return data?.names || [];
-    },
-  }))
-);
-
 function getLocalNames(networkUrl: string, address: string): [string[], number] | null {
   const key = makeKey(networkUrl, address);
   const value = localStorage.getItem(key);
@@ -36,6 +23,12 @@ function getLocalNames(networkUrl: string, address: string): [string[], number] 
 function setLocalNames(networkUrl: string, address: string, data: [string[], number]): void {
   const key = makeKey(networkUrl, address);
   return localStorage.setItem(key, JSON.stringify(data));
+}
+
+async function fetchNamesByAddress(param: Param) {
+  const res = await fetch(param.networkUrl + `/v1/addresses/stacks/${param.address}`);
+  const data = await res.json();
+  return data?.names || [];
 }
 
 export const namesAtom = atomFamily((address: string) =>
@@ -55,12 +48,10 @@ export const namesAtom = atomFamily((address: string) =>
     }
 
     try {
-      const names = get(
-        namesByAddressAtom({
-          networkUrl: network.coreApiUrl,
-          address,
-        })
-      );
+      const names = await fetchNamesByAddress({
+        networkUrl: network.coreApiUrl,
+        address,
+      });
       if (names?.length) {
         setLocalNames(network.coreApiUrl, address, [names, Date.now()]);
       }
