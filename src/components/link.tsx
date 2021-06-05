@@ -1,11 +1,6 @@
 import React from 'react';
 import { Text, Box, BoxProps } from '@stacks/ui';
 
-interface LinkProps extends BoxProps {
-  _hover?: BoxProps;
-  onClick: () => void;
-}
-
 export const buildEnterKeyEvent = (onClick: () => void) => {
   return (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && onClick) {
@@ -14,7 +9,7 @@ export const buildEnterKeyEvent = (onClick: () => void) => {
   };
 };
 
-export const Link: React.FC<LinkProps> = ({
+export const Link: React.FC<BoxProps> = ({
   _hover = {},
   children,
   fontSize = '12px',
@@ -22,7 +17,7 @@ export const Link: React.FC<LinkProps> = ({
   onClick,
   ...rest
 }) => (
-  <Box {...rest} onKeyPress={buildEnterKeyEvent(onClick)} onClick={onClick} tabIndex={0}>
+  <Box {...rest} onKeyPress={buildEnterKeyEvent(onClick as any)} onClick={onClick} tabIndex={0}>
     <Text
       _hover={{ textDecoration: 'underline', cursor: 'pointer', ..._hover }}
       fontSize={fontSize}
