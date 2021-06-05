@@ -5,7 +5,6 @@ import { Compose } from '@components/compose';
 import { useFeed } from '@hooks/use-feed';
 import { FeedItemComponent } from '@components/feed-item';
 import { useCurrentAddress } from '@hooks/use-current-address';
-import { AlwaysScrollToBottom } from '@components/always-scroll-to-bottom';
 
 const FeedList = memo(() => {
   const feed = useFeed();
@@ -14,9 +13,15 @@ const FeedList = memo(() => {
     <AnimatePresence initial={false}>
       {feed.map((item, key) => {
         const isUser = item.sender === address;
-        return <FeedItemComponent key={item.id} item={item} isUser={isUser} />;
+        return (
+          <FeedItemComponent
+            isLast={key === feed.length - 1}
+            key={item.id}
+            item={item}
+            isUser={isUser}
+          />
+        );
       })}
-      <AlwaysScrollToBottom />
     </AnimatePresence>
   );
 });

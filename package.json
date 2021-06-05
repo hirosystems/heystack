@@ -18,6 +18,7 @@
     "capsize": "2.0.0",
     "dayjs": "^1.10.5",
     "framer-motion": "4.1.17",
+    "immer": "^9.0.2",
     "jotai": "0.16.8",
     "modern-normalize": "1.1.0",
     "react": "17.0.2",
@@ -31,9 +32,9 @@
     "web-vitals": "2.0.0"
   },
   "devDependencies": {
-    "@blockstack/stacks-blockchain-api-types": "0.55.3",
     "@blockstack/clarity": "0.3.14",
     "@blockstack/clarity-native-bin": "0.3.14",
+    "@blockstack/stacks-blockchain-api-types": "0.55.3",
     "@stacks/eslint-config": "1.0.9",
     "@stacks/prettier-config": "0.0.8",
     "@testing-library/jest-dom": "5.11.4",
