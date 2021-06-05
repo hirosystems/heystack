@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai/utils';
 import { namesAtom } from '@store/names';
 import { Caption, Text } from '@components/typography';
 import { truncateMiddle } from '@stacks/ui-utils';
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { Box, color, Flex, Stack } from '@stacks/ui';
 import { border } from '@common/utils';
 import { useGetItemLikes } from '@hooks/use-get-item-likes';
@@ -14,6 +14,7 @@ import { toRelativeTime } from '@common/time';
 import { FiArrowUpCircle } from 'react-icons/all';
 import { motion } from 'framer-motion';
 import { Avatar } from '@components/avatar';
+import { useScrollToBottom } from '@hooks/use-scroll-to-bottom';
 
 const Address = ({ item }: { item: Heystack }) => {
   const address = convertAddress(item.sender, 'mainnet');
@@ -83,35 +84,44 @@ const ItemDetailsRow = memo(({ isUser, item }: { isUser: boolean; item: Heystack
   );
 });
 
-export const FeedItemComponent = memo(
-  ({ isUser, item, ...rest }: { isUser: boolean; item: Heystack }) => {
-    return (
-      <Stack
-        as={motion.div}
-        layout="position"
-        alignItems={isUser ? 'flex-end' : 'unset'}
-        alignSelf={isUser ? 'flex-end' : 'unset'}
-        initial={{ opacity: 0, y: 50, scale: 0.3 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-        wordBreak="break-word"
-        key={item.id}
-        mb="loose"
-        {...rest}
-      >
-        <Flex alignItems="flex-end">
-          <Avatar
-            flexShrink={0}
-            order={isUser ? 2 : 0}
-            name={item.sender}
-            size="36px"
-            mr={!isUser ? 'base' : 'unset'}
-            ml={isUser ? 'base' : 'unset'}
-          />
-          <Message isUser={isUser} item={item} />
-        </Flex>
-        <ItemDetailsRow isUser={isUser} item={item} />
-      </Stack>
-    );
-  }
-);
+export const FeedItemComponent = ({
+  isUser,
+  item,
+  isLast,
+  ...rest
+}: {
+  isLast: boolean;
+  isUser: boolean;
+  item: Heystack;
+}) => {
+  const ref = useScrollToBottom(isLast);
+  return (
+    <Stack
+      as={motion.div}
+      layout="position"
+      alignItems={isUser ? 'flex-end' : 'unset'}
+      alignSelf={isUser ? 'flex-end' : 'unset'}
+      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+      wordBreak="break-word"
+      key={item.id}
+      mb="loose"
+      ref={ref as any}
+      {...rest}
+    >
+      <Flex alignItems="flex-end">
+        <Avatar
+          flexShrink={0}
+          order={isUser ? 2 : 0}
+          name={item.sender}
+          size="36px"
+          mr={!isUser ? 'base' : 'unset'}
+          ml={isUser ? 'base' : 'unset'}
+        />
+        <Message isUser={isUser} item={item} />
+      </Flex>
+      <ItemDetailsRow isUser={isUser} item={item} />
+    </Stack>
+  );
+};

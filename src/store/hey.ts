@@ -65,6 +65,7 @@ export const heyTransactionsAtom = atomWithQuery<ContractCallTransaction[], stri
     const txClient = get(transactionsClientAtom);
 
     const txs = await client.getAccountTransactions({
+      limit: 50,
       principal: HEY_CONTRACT,
     });
     const txids = (txs as TransactionResults).results
@@ -88,7 +89,7 @@ export const pendingTxsAtom = atomWithQuery<Heystack[], string>(get => ({
   queryFn: async (): Promise<Heystack[]> => {
     const client = get(transactionsClientAtom);
 
-    const txs = await client.getMempoolTransactionList({});
+    const txs = await client.getMempoolTransactionList({ limit: 96 });
     const heyTxs = (txs as MempoolTransactionListResponse).results
       .filter(
         tx =>
