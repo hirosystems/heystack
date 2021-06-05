@@ -111,7 +111,10 @@ const ComposeField = memo(() => {
       alignItems="center"
       borderRadius="24px"
       as="form"
-      onSubmit={onSubmit}
+      onSubmit={e => {
+        e?.preventDefault();
+        onSubmit();
+      }}
       mx="auto"
       position="relative"
       width="600px"
@@ -127,6 +130,12 @@ const ComposeField = memo(() => {
         placeholder={toggle ? 'Search GIPHY' : 'Say hey to other Stackers'}
         width="100%"
         pr="70px"
+        onKeyPress={(event: React.KeyboardEvent) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            onSubmit();
+          }
+        }}
       />
       <Flex position="absolute" right="loose">
         <Fade in={!toggle && value !== ''}>

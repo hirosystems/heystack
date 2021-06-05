@@ -21,16 +21,12 @@ export const useComposeField = () => {
 
   const hasNoBalance = balance === '0' || !balance;
 
-  const onSubmit = useCallback(
-    e => {
-      e.preventDefault();
-      if (!isSignedIn) {
-        return;
-      }
-      handleSubmit();
-    },
-    [handleSubmit, isSignedIn]
-  );
+  const onSubmit = useCallback(() => {
+    if (!isSignedIn) {
+      return;
+    }
+    handleSubmit();
+  }, [handleSubmit, isSignedIn]);
 
   return {
     onSubmit,
