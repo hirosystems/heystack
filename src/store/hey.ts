@@ -25,12 +25,12 @@ export interface Heystack {
 export const incrementAtom = atom(0);
 
 export const userHeyBalanceAtom = atomFamily((address: string) =>
-  atomWithQuery<string, string>(get => ({
+  atomWithQuery<string | null, string | null>(get => ({
     queryKey: ['balance', address],
     refetchInterval: 5000,
     ...(defaultOptions as any),
-    queryFn: async (): Promise<string | undefined> => {
-      if (!address) return;
+    queryFn: async (): Promise<string | null> => {
+      if (!address) return null;
       const client = get(smartContractsClientAtom);
       const [contractAddress, contractName] = HEY_TOKEN_ADDRESS.split('.');
       const data = await client.callReadOnlyFunction({
@@ -45,6 +45,7 @@ export const userHeyBalanceAtom = atomFamily((address: string) =>
       if (data.okay && data.result) {
         return cvToString(hexToCV(data.result)).replace('(ok u', '').replace(')', '');
       }
+      return null;
     },
   }))
 );
@@ -138,7 +139,7 @@ export const contentTransactionsAtom = atom(get => {
 
     return {
       content,
-      attachment,
+      attachment: attachment === 'non' ? undefined : attachment,
       sender: tx.sender_address,
       id: tx.tx_id,
       index: contractLog?.value?.index?.value,

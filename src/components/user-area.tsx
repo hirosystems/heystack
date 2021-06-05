@@ -23,6 +23,9 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
         {styles => (
           <Flex top="100%" right={0} position="absolute" zIndex={99999} style={styles}>
             <Stack
+              onClick={() => {
+                onSignOut?.();
+              }}
               isInline
               _hover={{ bg: color('bg-alt') }}
               alignItems="center"
@@ -45,9 +48,6 @@ const Dropdown: React.FC<BoxProps & { onSignOut?: () => void; show?: boolean }> 
                 ml={2}
                 textStyle="caption.medium"
                 color="red"
-                onClick={() => {
-                  onSignOut?.();
-                }}
               >
                 Disconnect
               </Link>
