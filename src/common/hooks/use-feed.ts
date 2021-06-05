@@ -37,6 +37,7 @@ export function useFeed() {
         setFeed(draft => {
           draft[item.id] = {
             ...item,
+            timestamp: draft[item.id].timestamp, // to prevent layout shift, if a user refreshes it will use the confirmed time
           };
         });
       }
