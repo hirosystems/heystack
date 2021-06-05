@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
-import { contentTransactionsAtom, Heystack } from '@store/hey';
-import { atomWithDefault } from 'jotai/utils';
+import { Heystack } from '@store/hey';
 
 export const composeHeystackAom = atom('');
 export const attachmentUriAtom = atom('');

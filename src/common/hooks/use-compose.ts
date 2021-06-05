@@ -1,12 +1,14 @@
 import React from 'react';
 import { useAtom } from 'jotai';
-import { composeHeystackAom } from '@store/feed';
+import { attachmentUriAtom, composeHeystackAom } from '@store/feed';
 import { useToggle } from '@hooks/use-boolean';
 import { gihpyQueryAtom } from '@store/giphy';
+import { useUpdateAtom } from 'jotai/utils';
 
 export function useCompose() {
   const { toggle: giphyIsShowing } = useToggle('GIF_RESULTS');
 
+  const setAttachmentUri = useUpdateAtom(attachmentUriAtom);
   const [value, setValue] = useAtom(composeHeystackAom);
   const [giphyValue, setGiphyValue] = useAtom(gihpyQueryAtom);
 
@@ -23,6 +25,7 @@ export function useCompose() {
 
   const handleReset = () => {
     void setGiphyValue('');
+    void setAttachmentUri('');
     void setValue('');
   };
 
