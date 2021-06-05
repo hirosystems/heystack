@@ -1,4 +1,4 @@
-import { atomFamily } from 'jotai/utils';
+import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { atom } from 'jotai';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 
@@ -22,5 +22,5 @@ export const mainnetNetworkAtom = atom(() => {
 });
 export const showPendingOverlayAtom = atom(false);
 
-export const showAboutAtom = atom(true);
+export const showAboutAtom = atomWithStorage('show-welcome', true);
 export const booleanAtom = atomFamily((key: string) => atom(false));
