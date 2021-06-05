@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, color, Fade, Flex } from '@stacks/ui';
-import { useAtomValue } from 'jotai/utils';
+import { color, Fade, Flex, Spinner, Slide, Stack, Box } from '@stacks/ui';
 import { showPendingOverlayAtom } from '@store/ui';
+import { Caption } from '@components/typography';
+import { useAtom } from 'jotai';
 
 export const PendingOverlay = () => {
-  const isShowing = useAtomValue(showPendingOverlayAtom);
+  const [isShowing, setIsShowing] = useAtom(showPendingOverlayAtom);
   return (
     <Fade in={isShowing}>
       {style => (
@@ -18,10 +19,41 @@ export const PendingOverlay = () => {
           justifyContent="flex-end"
           alignItems="flex-end"
           p="extra-loose"
+          _hover={{ cursor: 'pointer' }}
+          onClick={() => setIsShowing(false)}
         >
-          <Box bg={color('bg')} p="extra-loose" borderRadius="24px">
-            Confirm the transaction in your wallet
-          </Box>
+          <Slide in={isShowing} placement="bottom">
+            {slideStyles => (
+              <Flex
+                pb="extra-loose"
+                pr="extra-loose"
+                alignItems="flex-end"
+                justifyContent="flex-end"
+                position="fixed"
+                bottom="extra-loose"
+                right="extra-loose"
+                style={slideStyles}
+              >
+                <Stack
+                  ml="auto"
+                  isInline
+                  bg={color('bg')}
+                  p="extra-loose"
+                  borderRadius="24px"
+                  alignItems="center"
+                  spacing="base"
+                >
+                  <Caption>Confirm the transaction in your wallet</Caption>
+                  <Spinner
+                    opacity={0.5}
+                    borderStyle="solid"
+                    color={color('text-caption')}
+                    size="sm"
+                  />
+                </Stack>
+              </Flex>
+            )}
+          </Slide>
         </Flex>
       )}
     </Fade>

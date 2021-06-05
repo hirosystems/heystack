@@ -8,10 +8,12 @@ import { ClaimHeyButton } from '@components/claim-hey-button';
 import { useComposeField } from '@hooks/use-compose-field';
 import { useToggle } from '@hooks/use-boolean';
 import { GiphyResultsCard } from '@components/giphy';
+import { useAttachment } from '@hooks/use-attachment';
 
 const ComposeField = memo(() => {
   const { onChange, value, onSubmit, isSignedIn, isLoading, hasNoBalance } = useComposeField();
   const { toggle, handleToggle } = useToggle('GIF_RESULTS');
+  const { hasAttachment } = useAttachment();
   const ref = useRef<HTMLInputElement | null>(null);
   return (
     <Stack
@@ -83,7 +85,7 @@ const ComposeField = memo(() => {
           transition={transition}
           _hover={{ cursor: 'pointer' }}
         >
-          {toggle ? 'HIDE' : 'GIF'}
+          {toggle ? 'HIDE' : `GIF${hasAttachment ? ' (1)' : ''}`}
         </Flex>
       </Flex>
       <GiphyResultsCard />
