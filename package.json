@@ -1,5 +1,5 @@
 {
-  "name": "heystack",
+  "name": "@hirosystems/heystack",
   "version": "0.1.0",
   "private": true,
   "prettier": "@stacks/prettier-config",
