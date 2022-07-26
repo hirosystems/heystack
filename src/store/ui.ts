@@ -11,7 +11,7 @@ export enum LOADING_KEYS {
 export const loadingAtom = atomFamily(key => atom(false));
 export const networkAtom = atom(() => {
   const _network = new StacksTestnet();
-  _network.coreApiUrl = 'https://stacks-node-api.regtest.stacks.co';
+  _network.coreApiUrl = 'https://stacks-node-api.testnet.stacks.co';
   return _network;
 });
 // Used temporarily to force getting names from mainnet
